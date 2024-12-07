@@ -1,7 +1,6 @@
 import express from 'express'
 const app = express()
 
-import indexRoutes from './routes/index.js'
 import stats from './routes/stats.js';
 
 const PORT = 3000
