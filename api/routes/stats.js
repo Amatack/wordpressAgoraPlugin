@@ -1,20 +1,24 @@
 import express from 'express';
 import { ChronikClient } from "chronik-client"
+import { Agora } from "ecash-agora";
 
-import { genesisQty } from '../helpers/genesisQty.js';
+import { getGenesisInfo } from '../helpers/getGenesisInfo.js';
+import { totalTrades } from '../helpers/totalTrades.js';
 import {chronikInstances} from '../constants.js'
+import { lastPrice } from '../helpers/lastPrice.js';
 
 let chronikInstancesArray = chronikInstances.split(' ')
 const chronik = new ChronikClient(chronikInstancesArray)
-let tokenId = '7b15aa573ecda8c8737123e0e84589806480025f5cd80b26457ba5168daf6f84'
+const agora = new Agora(chronik);
+let tokenId = 'faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820'
 const router = express.Router();
 
 
 router.get('/', async (req, res) => {
-    
-
-    let Qty = await genesisQty(chronik, tokenId)
-    res.status(200).send({'genesisQty':  Qty});
+    let genesisInfo = await getGenesisInfo(chronik, tokenId)
+    let trades = await totalTrades(agora, tokenId)
+    let currentOrder = await lastPrice(agora, tokenId)
+    res.status(200).send({genesisInfo, 'totalTrades': trades, 'lastPrice': currentOrder});
 });
 
 export default router;
