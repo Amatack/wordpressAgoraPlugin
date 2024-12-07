@@ -6,7 +6,7 @@ import stats from './routes/stats.js';
 
 const PORT = 3000
 
-app.use('/', stats);
+app.use('/stats', stats);
 
 // Iniciar el servidor
 app.listen(PORT, () => {
