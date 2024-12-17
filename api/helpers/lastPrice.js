@@ -5,7 +5,7 @@ export async function lastPrice(agora, tokenId){
     try {
         const activeOffers = await agora.activeOffersByTokenId(tokenId)
         let deepestActiveOfferedTokens = 0n;
-        console.log('aqui 3')
+        //console.log('here 3')
         for (const activeOffer of activeOffers) {
             const maxOfferTokens = BigInt(activeOffer.token.amount);
             if (maxOfferTokens > deepestActiveOfferedTokens) {
@@ -28,22 +28,22 @@ export async function lastPrice(agora, tokenId){
             activeOffer.totalAskedSats = askedSats;
             
         }
-            console.log('aqui ')
+            //console.log('aqui ')
             activeOffers.sort(
                 (a, b) =>
                     Number(a.spotPriceNanoSatsPerTokenSat) -
                     Number(b.spotPriceNanoSatsPerTokenSat),
             );
-            console.log('aqui 2')
+            //console.log('aqui 2')
             // This variable sorts offers by spot price; so this is the spot offer
             let selectedIndex = 0
             let selectedOffer = activeOffers[selectedIndex];
 
-            console.log('selectedOffer: ', selectedOffer)
+            //console.log('selectedOffer: ', selectedOffer)
 
             let takeTokenSatoshis = activeOffers[selectedIndex].variant.params.minAcceptedTokens().toString()
 
-            console.log('takeTokenSatoshis: ', takeTokenSatoshis)
+            //console.log('takeTokenSatoshis: ', takeTokenSatoshis)
             const priceInSatsOfMinOrder = (activeOffers[selectedIndex].totalAskedSats * BigInt(takeTokenSatoshis)) / activeOffers[selectedIndex].maxOfferTokens 
             const priceInXecOfMinOrder = addDecimalPointFromEnd(priceInSatsOfMinOrder, 2)
             return currentOrder = {

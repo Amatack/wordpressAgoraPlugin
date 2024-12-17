@@ -11,6 +11,8 @@
   "author": "amatack",
   "license": "ISC",
   "dependencies": {
+    "apollo-server-express": "^3.13.0",
+    "axios": "^1.7.9",
     "chronik-client": "^2.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.6",

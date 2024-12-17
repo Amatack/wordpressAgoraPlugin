@@ -1,13 +1,23 @@
 import express from 'express'
+import { ApolloServer } from 'apollo-server-express';
+
+
+import tokenTypeDefs from './graphql/typeDefs/stats.js';
+import pluginResolvers from './graphql/resolvers/pluginResolvers.js';
 const app = express()
 
-import stats from './routes/stats.js';
 
-const PORT = 3000
+const server = new ApolloServer({
+    
+    resolvers: pluginResolvers,
+    typeDefs: tokenTypeDefs
+})
 
-app.use('/stats', stats);
+await server.start();
+
+server.applyMiddleware({app, path: '/graphql'})
 
 // Iniciar el servidor
-app.listen(PORT, () => {
-    console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+app.listen(4500, () => {
+    console.log(`Server running on http://localhost:${4500}`);
 });
