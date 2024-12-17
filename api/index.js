@@ -1,11 +1,12 @@
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express';
-
+import cors from 'cors'
 
 import tokenTypeDefs from './graphql/typeDefs/stats.js';
 import pluginResolvers from './graphql/resolvers/pluginResolvers.js';
 const app = express()
 
+app.use(cors())
 
 const server = new ApolloServer({
     
