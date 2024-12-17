@@ -10,7 +10,10 @@ const app = express()
 const server = new ApolloServer({
     
     resolvers: pluginResolvers,
-    typeDefs: tokenTypeDefs
+    typeDefs: tokenTypeDefs,
+    persistedQueries: {
+        cache: "bounded", // Configure a limited caché 
+    }
 })
 
 await server.start();
