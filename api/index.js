@@ -13,7 +13,9 @@ const server = new ApolloServer({
     typeDefs: tokenTypeDefs,
     persistedQueries: {
         cache: "bounded", // Configure a limited caché 
-    }
+    },
+    introspection: true, // Habilita la introspección
+    playground: true,
 })
 
 await server.start();
