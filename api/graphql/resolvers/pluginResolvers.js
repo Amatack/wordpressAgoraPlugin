@@ -11,26 +11,20 @@ const agora = new Agora(chronik);
 
 const pluginResolvers = {
     Query: {
-        async tokenData(_, { tokenId }) {
-            const genesisInfo = await getGenesisInfo(chronik, tokenId);
-            const trades = await totalTrades(agora, tokenId);
-            const currentOrder = await lastPrice(agora, tokenId);
-        return {
-            genesisInfo,
-            totalTrades: trades,
-            lastPrice: currentOrder,
-            };
-        },
-        async genesisInfo(_, { tokenId }) {
-        return await getGenesisInfo(chronik, tokenId);
-        },
-        async totalTrades(_, { tokenId }) {
-        return await totalTrades(agora, tokenId);
-        },
-        async lastPrice(_, { tokenId }) {
-        return await lastPrice(agora, tokenId);
-        },
-    },
+        async tokenData(_, { tokenId, include }) {
+            const result = {}
+            if (include.genesisInfo) {
+                result.genesisInfo = await getGenesisInfo(chronik, tokenId);
+            }
+            if (include.totalTrades) {
+                result.totalTrades = await totalTrades(agora, tokenId);
+            }
+            if (include.lastPrice) {
+                result.lastPrice = await lastPrice(agora, tokenId);
+            }
+            return result;
+        }
+    }
 };
 
 export default pluginResolvers;

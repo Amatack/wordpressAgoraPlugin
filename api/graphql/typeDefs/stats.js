@@ -16,16 +16,19 @@ const tokenTypeDefs = gql`
     }
 
     type TokenData {
-        genesisInfo: String
+        genesisInfo: GenesisInfo
         totalTrades: Float
         lastPrice: LastPrice
     }
 
+    input TokenDataIncludeInput {
+        genesisInfo: Boolean
+        totalTrades: Boolean
+        lastPrice: Boolean
+    }
+
     type Query {
-        tokenData(tokenId: String!): TokenData
-        genesisInfo(tokenId: String!): GenesisInfo
-        totalTrades(tokenId: String!): Float
-        lastPrice(tokenId: String!): LastPrice
+         tokenData(tokenId: String!, include: TokenDataIncludeInput!): TokenData
     }
 `;
 
