@@ -19,12 +19,16 @@ const tokenTypeDefs = gql`
         genesisInfo: GenesisInfo
         totalTrades: Float
         lastPrice: LastPrice
+        supply: String
+        marketCap: String
     }
 
     input TokenDataIncludeInput {
         genesisInfo: Boolean
         totalTrades: Boolean
         lastPrice: Boolean
+        supply: Boolean
+        marketCap: Boolean
     }
 
     type Query {

@@ -24,8 +24,6 @@ export async function lastPrice(agora, tokenId){
 
             activeOffer.spotPriceNanoSatsPerTokenSat =
                 spotPriceNanoSatsPerTokenSat;
-            activeOffer.maxOfferTokens = maxOfferTokens
-            activeOffer.totalAskedSats = askedSats;
             
         }
             //console.log('aqui ')
@@ -41,13 +39,13 @@ export async function lastPrice(agora, tokenId){
 
             //console.log('selectedOffer: ', selectedOffer)
 
-            let takeTokenSatoshis = activeOffers[selectedIndex].variant.params.minAcceptedTokens().toString()
+            let takeTokenSatoshis = selectedOffer.variant.params.minAcceptedTokens().toString()
 
             //console.log('takeTokenSatoshis: ', takeTokenSatoshis)
-            const priceInSatsOfMinOrder = (activeOffers[selectedIndex].totalAskedSats * BigInt(takeTokenSatoshis)) / activeOffers[selectedIndex].maxOfferTokens 
-            const priceInXecOfMinOrder = addDecimalPointFromEnd(priceInSatsOfMinOrder, 2)
+            const priceOfMinOrderWithoutDecimal = activeOffers[selectedIndex].askedSats(BigInt(takeTokenSatoshis));
+            const priceOfMinOrder = addDecimalPointFromEnd(priceOfMinOrderWithoutDecimal, 2)
             return currentOrder = {
-                price: priceInXecOfMinOrder + " XEC",
+                price: priceOfMinOrder + " XEC",
                 minAmount: takeTokenSatoshis.toString()
             }
     } catch (error) {

@@ -10,7 +10,7 @@ import { lastPrice } from '../helpers/lastPrice.js';
 let chronikInstancesArray = chronikInstances.split(' ')
 const chronik = new ChronikClient(chronikInstancesArray)
 const agora = new Agora(chronik);
-let tokenId = 'faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820'
+let tokenId = 'aed861a31b96934b88c0252ede135cb9700d7649f69191235087a3030e553cb1'
 const router = express.Router();
 
 
