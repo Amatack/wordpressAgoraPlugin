@@ -1,24 +1,45 @@
 <?php
 /**
- * Plugin Name: Plugin
- * Description: A custom plugin with Gutenberg blocks.
- * Version: 1.0
- * Author: Your Name
+ * Plugin Name: Agora Stats
+ * Description: Shows agora statistics about your token.
+ * Version: 0.1.0
+ * Author: Amatack
  */
 
-function my_plugin_enqueue_block_editor_assets() {
+ if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+    }
+
+ function my_dynamic_block_plugin_register_blocks() {
+
     wp_enqueue_script(
-        'my-plugin-blocks',
-        plugins_url('build/index.js', __FILE__),
-        [ 'wp-blocks', 'wp-element', 'wp-editor' ],
-        filemtime(plugin_dir_path(__FILE__) . 'build/index.js')
+        'my-multiple-blocks-plugin',
+        plugins_url( 'build/index.js', __FILE__ ),
+        array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components' ),
+        filemtime( plugin_dir_path( __FILE__ ) . 'build/index.js' )
     );
 
-    wp_enqueue_style(
-        'my-plugin-blocks-editor',
-        plugins_url('build/index.css', __FILE__),
-        [ 'wp-edit-blocks' ],
-        filemtime(plugin_dir_path(__FILE__) . 'build/index.css')
+    // Register block 1
+    register_block_type(
+        'my-plugin/block-one',
+        
+        array(
+            'render_callback' => 'block_one_render_callback',
+        )
+    );
+
+    // Register block 2
+    register_block_type(
+        'my-plugin/block-two',
+        array(
+            'render_callback' => 'block_two_render_callback',
+        )
     );
 }
-add_action('enqueue_block_editor_assets', 'my_plugin_enqueue_block_editor_assets');
+require_once plugin_dir_path(__FILE__) . 'includes/render.php';
+add_action('init', 'my_dynamic_block_plugin_register_blocks');
+
+
+
+
+
