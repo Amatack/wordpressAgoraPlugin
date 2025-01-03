@@ -11,8 +11,9 @@ const tokenTypeDefs = gql`
     }
 
     type LastPrice {
-        price: String
-        minAmount: String
+        minXecOrder: String
+        minTokenOrder: String
+        minPrice: String
     }
 
     type TokenData {
