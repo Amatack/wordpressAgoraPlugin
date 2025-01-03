@@ -4,10 +4,10 @@ export async function marketCap(supply, currentPrice, minAmount) {
     const currentPriceIntegerPart = currentPriceIntegerPartSplited[0] + currentPriceIntegerPartSplited[1]
     
     const SatsPerToken = Number(currentPriceIntegerPart) / minAmount
-   
+    
     const supplyIntegerPart = supply.split('.')[0];
     
     const floatMarketCap = supplyIntegerPart * SatsPerToken
-    return floatMarketCap.toFixed(2);
+    return floatMarketCap.toFixed(2) + " XEC";
 
 }
