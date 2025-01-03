@@ -1,6 +1,6 @@
 import { addDecimalPointFromEnd } from "../utils/addDecimalPointFromEnd.js";
 
-export async function lastPrice(agora, tokenId){
+export async function getLastPrice(agora, tokenId){
     let currentOrder = {}
     try {
         const activeOffers = await agora.activeOffersByTokenId(tokenId)
@@ -44,9 +44,12 @@ export async function lastPrice(agora, tokenId){
             //console.log('takeTokenSatoshis: ', takeTokenSatoshis)
             const priceOfMinOrderWithoutDecimal = activeOffers[selectedIndex].askedSats(BigInt(takeTokenSatoshis));
             const priceOfMinOrder = addDecimalPointFromEnd(priceOfMinOrderWithoutDecimal, 2)
+            let minPrice = Math.round((Number(priceOfMinOrder) / takeTokenSatoshis))
+            
             return currentOrder = {
-                price: priceOfMinOrder + " XEC",
-                minAmount: takeTokenSatoshis.toString()
+                minXecOrder: priceOfMinOrder + " XEC",
+                minTokenOrder: takeTokenSatoshis.toString(),
+                minPrice: minPrice.toString() + " XEC"
             }
     } catch (error) {
         return currentOrder 
