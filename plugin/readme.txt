@@ -1,5 +1,5 @@
 === Plugin ===
-Contributors:      The WordPress Contributors
+Contributor:       Amatack
 Tags:              block
 Tested up to:      6.6
 Stable tag:        0.1.0
