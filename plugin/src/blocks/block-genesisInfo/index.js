@@ -4,9 +4,9 @@ import Edit from './edit';
 
 import AgoraIcon from '../../assets/agoraIcon';
 
-registerBlockType('my-plugin/block-two', {
-    title: __('Block Two', 'my-plugin'),
-    description: __('A block that displays locations from the Rick and Morty API.', 'my-plugin'),
+registerBlockType('agora-stats/block-genesis-info', {
+    title: __('Block Two', 'agora-stats'),
+    description: __('A block that displays locations from the Rick and Morty API.', 'agora-stats'),
     category: 'widgets',
     icon: AgoraIcon, // Puedes usar cualquier icono disponible en Dashicons
     supports: {

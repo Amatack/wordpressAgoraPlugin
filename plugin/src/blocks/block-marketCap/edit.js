@@ -9,9 +9,7 @@ const Edit = () => {
         const query = `
             query TokenData($tokenId: String!, $include: TokenDataIncludeInput!) {
                 tokenData(tokenId: $tokenId, include: $include) {
-                    lastPrice {
-                        minPrice
-                    }
+                    marketCap
                 }
             }
         `;
@@ -19,7 +17,7 @@ const Edit = () => {
         const variables = {
             tokenId: "faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820",
             include: {
-                lastPrice: true,
+                marketCap: true,
             },
         };
 
@@ -49,11 +47,11 @@ const Edit = () => {
         return <p>{__('No data available.', 'agora-stats')}</p>;
     }
 
-    const { lastPrice } = data.tokenData;
+    const { marketCap } = data.tokenData;
 
     return (
         <div>
-            <p>{__('Price:', 'agora-stats')} {lastPrice.minPrice}</p>
+            <p>{__('Market Cap:', 'agora-stats')} {marketCap}</p>
         </div>
     );
 };

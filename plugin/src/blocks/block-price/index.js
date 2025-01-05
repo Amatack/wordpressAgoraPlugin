@@ -3,8 +3,8 @@ import edit from './edit';
 
 import AgoraIcon from '../../assets/agoraIcon';
 
-registerBlockType('my-plugin/block-one', {
-    title: 'Block One',
+registerBlockType('agora-stats/block-price', {
+    title: 'Price',
     category: 'widgets',
     edit,
     icon: AgoraIcon,

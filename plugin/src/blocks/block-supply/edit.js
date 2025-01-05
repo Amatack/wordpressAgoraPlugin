@@ -9,9 +9,7 @@ const Edit = () => {
         const query = `
             query TokenData($tokenId: String!, $include: TokenDataIncludeInput!) {
                 tokenData(tokenId: $tokenId, include: $include) {
-                    lastPrice {
-                        price
-                    }
+                    supply
                 }
             }
         `;
@@ -19,7 +17,7 @@ const Edit = () => {
         const variables = {
             tokenId: "faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820",
             include: {
-                lastPrice: true,
+                supply: true,
             },
         };
 
@@ -42,18 +40,18 @@ const Edit = () => {
     }, []);
 
     if (loading) {
-        return <p>{__('Loading data...', 'my-plugin')}</p>;
+        return <p>{__('Loading data...', 'agora-stats')}</p>;
     }
 
     if (!data || !data.tokenData) {
-        return <p>{__('No data available.', 'my-plugin')}</p>;
+        return <p>{__('No data available.', 'agora-stats')}</p>;
     }
 
-    const { lastPrice } = data.tokenData;
+    const { supply } = data.tokenData;
 
     return (
         <div>
-            <p>{__('Price:', 'my-plugin')} {lastPrice.price}</p>
+            <p>{__('Supply:', 'agora-stats')} {supply}</p>
         </div>
     );
 };

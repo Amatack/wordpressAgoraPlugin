@@ -21,18 +21,34 @@
 
     // Register block 1
     register_block_type(
-        'my-plugin/block-one',
+        'agora-stats/block-price',
         
         array(
-            'render_callback' => 'block_one_render_callback',
+            'render_callback' => 'block_price_render_callback',
         )
     );
 
     // Register block 2
     register_block_type(
-        'my-plugin/block-two',
+        'agora-stats/block-genesis-info',
         array(
-            'render_callback' => 'block_two_render_callback',
+            'render_callback' => 'block_genesisInfo_render_callback',
+        )
+    );
+
+    // Register block 3
+    register_block_type(
+        'agora-stats/block-supply',
+        array(
+            'render_callback' => 'block_supply_render_callback',
+        )
+    );
+
+    // Register block 4
+    register_block_type(
+        'agora-stats/block-market-cap',
+        array(
+            'render_callback' => 'block_marketCap_render_callback',
         )
     );
 }
