@@ -6,6 +6,7 @@ import { getLastPrice } from '../../helpers/getLastPrice.js';
 import { chronikInstances } from '../../constants.js';
 import { getSupply } from "../../helpers/getSupply.js";
 import { marketCap } from "../../helpers/marketCap.js";
+import { getTotalTxs } from "../../helpers/getTotalTxs.js";
 
 let chronikInstancesArray = chronikInstances.split(' ');
 const chronik = new ChronikClient(chronikInstancesArray);
@@ -52,6 +53,10 @@ const pluginResolvers = {
                     minTokenOrder = lastPrice.minTokenOrder
                 }
                 result.marketCap = await marketCap(supply, currentPrice, minTokenOrder)
+            }
+            if (include.totalTxs){
+                let totalTxs = await getTotalTxs(chronik, tokenId)
+                result.totalTxs = totalTxs
             }
             return result;
         }

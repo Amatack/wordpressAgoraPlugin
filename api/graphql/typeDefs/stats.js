@@ -22,6 +22,7 @@ const tokenTypeDefs = gql`
         lastPrice: LastPrice
         supply: String
         marketCap: String
+        totalTxs: Int
     }
 
     input TokenDataIncludeInput {
@@ -30,6 +31,7 @@ const tokenTypeDefs = gql`
         lastPrice: Boolean
         supply: Boolean
         marketCap: Boolean
+        totalTxs: Boolean
     }
 
     type Query {
