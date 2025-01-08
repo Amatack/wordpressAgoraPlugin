@@ -51,6 +51,15 @@
             'render_callback' => 'block_marketCap_render_callback',
         )
     );
+
+    // Register block 5
+
+    register_block_type(
+        'agora-stats/block-total-txs',
+        array(
+            'render_callback' => 'block_blockTotalTxs_render_callback',
+        )
+    );
 }
 require_once plugin_dir_path(__FILE__) . 'includes/render.php';
 add_action('init', 'my_dynamic_block_plugin_register_blocks');

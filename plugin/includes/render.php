@@ -1,5 +1,18 @@
 <?php
-function fetch_data_from_graphql($query) {
+function fetch_data_from_graphql() {
+    $query = <<<GRAPHQL
+    query TokenData {
+        tokenData(tokenId: "faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820", include: { lastPrice: true, supply: true, marketCap: true, totalTxs: true }) {
+            lastPrice {
+                minPrice
+            }
+            supply
+            marketCap
+            totalTxs
+        }
+    }
+    GRAPHQL;
+    
     $response = wp_remote_post('https://wordpressagoraplugin-production.up.railway.app/graphql', array(
         'headers' => array(
             'Content-Type' => 'application/json',
@@ -14,30 +27,28 @@ function fetch_data_from_graphql($query) {
     $data = wp_remote_retrieve_body($response);
     return json_decode($data);
 }
-function block_price_render_callback($attributes) {
-    // Defining the GraphQL query
-    $query = <<<GRAPHQL
-    query TokenData {
-        tokenData(tokenId: "faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820", include: { lastPrice: true }) {
-            lastPrice {
-                minPrice
-            }
-        }
+
+// Variable global para almacenar los datos obtenidos
+$global_data = null;
+
+// Función para obtener los datos compartidos
+function get_shared_data() {
+    global $global_data;
+    if ($global_data === null) {
+        $global_data = fetch_data_from_graphql();
     }
-    GRAPHQL;
+    return $global_data;
+}
 
-    // Use the fetch_data_from_graphql function to perform the query
-    $data = fetch_data_from_graphql($query);
+// Render Callback para los bloques
+function block_price_render_callback($attributes) {
+    $data = get_shared_data();
 
-    // Validate the data obtained
     if (!$data || empty($data->data->tokenData)) {
         return '<p>No se encontraron datos para el token especificado.</p>';
     }
 
-    // Extract the necessary data
     $lastPrice = $data->data->tokenData->lastPrice;
-
-    // Generate the dynamic content of the block
     $output = '<div class="block-one">';
     if (!empty($lastPrice)) {
         $output .= '<p>Price: ' . esc_html($lastPrice->minPrice) . '</p>';
@@ -49,19 +60,8 @@ function block_price_render_callback($attributes) {
     return $output;
 }
 
-
 function block_genesisInfo_render_callback($attributes) {
-    $query = <<<GRAPHQL
-    {
-        locations {
-            results {
-                name
-            }
-        }
-    }
-    GRAPHQL;
-
-    $data = fetch_data_from_graphql($query);
+    $data = get_shared_data();
 
     $output = '<div class="block-two">';
     if (!empty($data->data->locations->results)) {
@@ -77,32 +77,18 @@ function block_genesisInfo_render_callback($attributes) {
 }
 
 function block_supply_render_callback($attributes) {
-    // Defining the GraphQL query
-    $query = <<<GRAPHQL
-    query TokenData {
-        tokenData(tokenId: "faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820", include: { supply: true }) {
-            supply
-        }
-    }
-    GRAPHQL;
+    $data = get_shared_data();
 
-    // Use the fetch_data_from_graphql function to perform the query
-    $data = fetch_data_from_graphql($query);
-
-    // Validate the data obtained
     if (!$data || empty($data->data->tokenData)) {
-        return '<p>No data found for the specified token.</p>';
+        return '<p>No se encontraron datos para el token especificado.</p>';
     }
 
-    // Extract the necessary data
     $supply = $data->data->tokenData->supply;
-
-    // Generate the dynamic content of the block
     $output = '<div class="block-one">';
     if (!empty($supply)) {
         $output .= '<p>Supply: ' . esc_html($supply) . '</p>';
     } else {
-        $output .= '<p>No data available for price.</p>';
+        $output .= '<p>No data available for supply.</p>';
     }
     $output .= '</div>';
 
@@ -110,32 +96,37 @@ function block_supply_render_callback($attributes) {
 }
 
 function block_marketCap_render_callback($attributes) {
-    // Defining the GraphQL query
-    $query = <<<GRAPHQL
-    query TokenData {
-        tokenData(tokenId: "faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820", include: { marketCap: true }) {
-            marketCap
-        }
-    }
-    GRAPHQL;
+    $data = get_shared_data();
 
-    // Use the fetch_data_from_graphql function to perform the query
-    $data = fetch_data_from_graphql($query);
-
-    // Validate the data obtained
     if (!$data || empty($data->data->tokenData)) {
-        return '<p>No data found for the specified token.</p>';
+        return '<p>No se encontraron datos para el token especificado.</p>';
     }
 
-    // Extract the necessary data
     $marketCap = $data->data->tokenData->marketCap;
-
-    // Generate the dynamic content of the block
     $output = '<div class="block-one">';
     if (!empty($marketCap)) {
         $output .= '<p>Market Cap: ' . esc_html($marketCap) . '</p>';
     } else {
-        $output .= '<p>No data available for price.</p>';
+        $output .= '<p>No data available for market cap.</p>';
+    }
+    $output .= '</div>';
+
+    return $output;
+}
+
+function block_blockTotalTxs_render_callback($attributes){
+    $data = get_shared_data();
+
+    if (!$data || empty($data->data->tokenData)) {
+        return '<p>No se encontraron datos para el token especificado.</p>';
+    }
+
+    $totalTxs = $data->data->tokenData->totalTxs;
+    $output = '<div class="block-totalTxs">';
+    if (!empty($totalTxs)) {
+        $output .= '<p>Total Txs: ' . esc_html($totalTxs) . '</p>';
+    } else {
+        $output .= '<p>No data available for market cap.</p>';
     }
     $output .= '</div>';
 
