@@ -1,4 +1,5 @@
 <?php
+
 function fetch_data_from_graphql() {
     $query = <<<GRAPHQL
     query TokenData {
@@ -131,4 +132,18 @@ function block_blockTotalTxs_render_callback($attributes){
     $output .= '</div>';
 
     return $output;
+}
+
+function mi_plugin_render_page()
+{
+    ?>
+    <div class="wrap">
+        <div class="container">
+            <label class="title" for="texto">
+                <h2>Token ID:</h2>
+            </label>
+            <input class="input-text" type="text" id="texto" placeholder="Enter tokenId">
+        </div>
+    </div>
+    <?php
 }

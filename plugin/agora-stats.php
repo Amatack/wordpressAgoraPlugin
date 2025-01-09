@@ -11,7 +11,9 @@
     }
 
  function my_dynamic_block_plugin_register_blocks() {
-
+    
+    add_action('admin_menu', 'agora_stats_add_admin_page');
+    
     wp_enqueue_script(
         'my-multiple-blocks-plugin',
         plugins_url( 'build/index.js', __FILE__ ),
@@ -61,10 +63,18 @@
         )
     );
 }
+
+function agora_stats_add_admin_page() {
+    add_menu_page(
+        'Agora Stats',              // Título de la página.
+        'Agora Stats',              // Título del menú.
+        'manage_options',         // Capacidad requerida.
+        'agora-stats',              // Slug único.
+        'mi_plugin_render_page',  // Función para renderizar la página.
+        plugin_dir_url( __FILE__ ) . 'src/assets/agoraImage.png',  // Icono del menú.
+        20                        // Posición del menú.
+    );
+}
+
 require_once plugin_dir_path(__FILE__) . 'includes/render.php';
 add_action('init', 'my_dynamic_block_plugin_register_blocks');
-
-
-
-
-
