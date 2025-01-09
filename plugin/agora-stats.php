@@ -75,6 +75,12 @@ function agora_stats_add_admin_page() {
         20                        // Posición del menú.
     );
 }
-
+function mi_plugin_enqueue_styles() {
+    wp_enqueue_style(
+        'dashboard-page-style', 
+        plugin_dir_url(__FILE__) . 'includes/dashboardPage.css'
+    );
+}
 require_once plugin_dir_path(__FILE__) . 'includes/render.php';
 add_action('init', 'my_dynamic_block_plugin_register_blocks');
+add_action('admin_enqueue_scripts', 'mi_plugin_enqueue_styles');
