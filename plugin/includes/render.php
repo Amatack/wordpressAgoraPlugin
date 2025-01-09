@@ -140,9 +140,12 @@ function mi_plugin_render_page()
     <div class="wrap">
         <div class="container">
             <label class="title" for="texto">
-                <h2>Token ID:</h2>
+                <h2>Token ID: </h2>
             </label>
             <input class="input-text" type="text" id="texto" placeholder="Enter tokenId">
+        </div>
+        <div class="button-container">
+            <button class="center-button" id="save-button">SAVE</button>
         </div>
     </div>
     <?php
