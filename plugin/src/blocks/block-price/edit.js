@@ -10,7 +10,7 @@ const Edit = () => {
             query TokenData($tokenId: String!, $include: TokenDataIncludeInput!) {
                 tokenData(tokenId: $tokenId, include: $include) {
                     lastPrice {
-                        minPrice
+                        minPriceInXec
                     }
                 }
             }
@@ -53,7 +53,7 @@ const Edit = () => {
 
     return (
         <div>
-            <p>{__('Price:', 'agora-stats')} {lastPrice.minPrice}</p>
+            <p>{__('Price:', 'agora-stats')} {lastPrice.minPriceInXec}</p>
         </div>
     );
 };

@@ -5,7 +5,7 @@ function fetch_data_from_graphql() {
     query TokenData {
         tokenData(tokenId: "faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820", include: { lastPrice: true, supply: true, marketCap: true, totalTxs: true }) {
             lastPrice {
-                minPrice
+                minPriceInXec
             }
             supply
             marketCap
@@ -52,7 +52,7 @@ function block_price_render_callback($attributes) {
     $lastPrice = $data->data->tokenData->lastPrice;
     $output = '<div class="block-one">';
     if (!empty($lastPrice)) {
-        $output .= '<p>Price: ' . esc_html($lastPrice->minPrice) . '</p>';
+        $output .= '<p>Price: ' . esc_html($lastPrice->minPriceInXec) . '</p>';
     } else {
         $output .= '<p>No data available for price.</p>';
     }

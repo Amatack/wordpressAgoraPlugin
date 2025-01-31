@@ -1,7 +1,7 @@
 import { addDecimalPointFromEnd } from "../utils/addDecimalPointFromEnd.js";
+import axios from "axios";
 
 export async function getLastPrice(agora, tokenId){
-    let currentOrder = {}
     try {
         const activeOffers = await agora.activeOffersByTokenId(tokenId)
         let deepestActiveOfferedTokens = 0n;
@@ -44,14 +44,28 @@ export async function getLastPrice(agora, tokenId){
             //console.log('takeTokenSatoshis: ', takeTokenSatoshis)
             const priceOfMinOrderWithoutDecimal = activeOffers[selectedIndex].askedSats(BigInt(takeTokenSatoshis));
             const priceOfMinOrder = addDecimalPointFromEnd(priceOfMinOrderWithoutDecimal, 2)
-            let minPrice = Math.round((Number(priceOfMinOrder) / takeTokenSatoshis))
-            
-            return currentOrder = {
+            let minPriceInXec = Math.round((Number(priceOfMinOrder) / takeTokenSatoshis))
+            let xecValue = 0
+            try {
+                const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=ecash&vs_currencies=usd')
+                    console.log('new status: ', response.status)
+                    if(response.status >= 200 && response.status < 300){
+                        xecValue = response.data.ecash.usd
+                    }else{
+                        console.error('error getting price, HTTP error: ', response.status)
+                    }
+            } catch (error) {
+                console.error('error getting price from coingecko: ', error)
+            }
+            let minPriceInUsd = minPriceInXec * xecValue 
+            return {
                 minXecOrder: priceOfMinOrder + " XEC",
                 minTokenOrder: takeTokenSatoshis.toString(),
-                minPrice: minPrice.toString() + " XEC"
+                minPriceInXec: minPriceInXec.toString(),
+                minPriceInUsd: !xecValue ? 'Error' : minPriceInUsd.toFixed(5)
             }
     } catch (error) {
-        return currentOrder 
+        console.error('error getting price: ', error)
+        return {}
     }
 }   
