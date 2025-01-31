@@ -134,19 +134,94 @@ function block_blockTotalTxs_render_callback($attributes){
     return $output;
 }
 
-function mi_plugin_render_page()
+
+function mi_admin_page()
 {
+    global $wpdb;
+
+    // Nombre de la tabla (usa el prefijo definido en WordPress)
+    $table_name = $wpdb->prefix . "agora_stats";
+
+    // Verificar si la tabla existe
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+        // Crear la tabla si no existe
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
+            id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            token_id VARCHAR(255) NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ) $charset_collate;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    
     ?>
-    <div class="wrap">
-        <div class="container">
-            <label class="title" for="texto">
-                <h2>Token ID: </h2>
-            </label>
-            <input class="input-text" type="text" id="texto" placeholder="Enter tokenId">
+        <div class="wrap">
+            <div class="container">
+                <label class="title" for="texto">
+                    <h2>Token ID: </h2>
+                </label>
+                <input class="input-text" type="text" id="texto" placeholder="Enter tokenId">
+            </div>
+            <div class="button-container">
+                <button class="center-button" id="save-button">SAVE</button>
+            </div>
+    
+
+    
         </div>
-        <div class="button-container">
-            <button class="center-button" id="save-button">SAVE</button>
-        </div>
-    </div>
     <?php
+}
+
+function save_etoken_id() {
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . "agora_stats";
+
+    if (!isset($_POST['token_id'])) {
+        wp_send_json_error('No se recibió ningún token.');
+    }
+
+    $token_id = sanitize_text_field($_POST['token_id']);
+
+    // Validar que el token tenga exactamente 64 caracteres
+     if (strlen($token_id) !== 64) {
+        wp_send_json_error('El token es inválido. Debe tener exactamente 64 caracteres.');
+    }
+
+    // Verificar si ya existe un registro en la tabla
+    $existing_entry = $wpdb->get_var("SELECT id FROM $table_name LIMIT 1");
+
+    if ($existing_entry) {
+        // Si existe, actualizamos el registro
+        $updated = $wpdb->update(
+            $table_name,
+            ['token_id' => $token_id],
+            ['id' => $existing_entry],
+            ['%s'],
+            ['%d']
+        );
+
+        if ($updated !== false) {
+            wp_send_json_success('Token actualizado correctamente.');
+        } else {
+            wp_send_json_error('Error al actualizar el token.');
+        }
+    } else {
+        // Si no existe, insertamos un nuevo registro
+        $inserted = $wpdb->insert(
+            $table_name,
+            ['token_id' => $token_id],
+            ['%s']
+        );
+
+        if ($inserted) {
+            wp_send_json_success('Token guardado correctamente.');
+        } else {
+            wp_send_json_error('Error al guardar el token.');
+        }
+    }
 }
