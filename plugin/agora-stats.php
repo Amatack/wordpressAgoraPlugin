@@ -34,21 +34,13 @@
 
     // Register block 2
     register_block_type(
-        'agora-stats/block-genesis-info',
-        array(
-            'render_callback' => 'block_genesisInfo_render_callback',
-        )
-    );
-
-    // Register block 3
-    register_block_type(
         'agora-stats/block-supply',
         array(
             'render_callback' => 'block_supply_render_callback',
         )
     );
 
-    // Register block 4
+    // Register block 3
     register_block_type(
         'agora-stats/block-market-cap',
         array(
@@ -56,7 +48,7 @@
         )
     );
 
-    // Register block 5
+    // Register block 4
 
     register_block_type(
         'agora-stats/block-total-txs',
