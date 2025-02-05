@@ -1,9 +1,9 @@
-import { useState, useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { useEffect, useState } from '@wordpress/element';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, RadioControl } from '@wordpress/components';
 
-const Edit = () => {
+const Edit = ({ attributes, setAttributes }) => {
     const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const query = `
@@ -11,6 +11,9 @@ const Edit = () => {
                 tokenData(tokenId: $tokenId, include: $include) {
                     lastPrice {
                         minPriceInXec
+                        minPriceInUsd
+                        minTokenOrder
+                        minXecOrder
                     }
                 }
             }
@@ -32,28 +35,39 @@ const Edit = () => {
         })
             .then((response) => response.json())
             .then((result) => {
-                setData(result.data);
-                setLoading(false);
+                if (result.data && result.data.tokenData && result.data.tokenData.lastPrice) {
+                    setData(result.data.tokenData.lastPrice);
+                } else {
+                    console.error("Invalid response structure:", result);
+                }
             })
             .catch((error) => {
                 console.error('Error fetching GraphQL data:', error);
-                setLoading(false);
             });
     }, []);
 
-    if (loading) {
-        return <p>{__('Loading data...', 'agora-stats')}</p>;
-    }
-
-    if (!data || !data.tokenData) {
-        return <p>{__('No data available.', 'agora-stats')}</p>;
-    }
-
-    const { lastPrice } = data.tokenData;
+    // Verifica que los datos existen antes de desestructurar
+    const { minXecOrder, minTokenOrder, minPriceInXec, minPriceInUsd } = data || {};
 
     return (
         <div>
-            <p>{__('Price:', 'agora-stats')} {lastPrice.minPriceInXec}</p>
+            <h2>{attributes.number || "[Select Option]"}</h2>
+
+            <InspectorControls>
+                <PanelBody title="Data from Agora">
+                    <RadioControl
+                        label="Select price property"
+                        selected={attributes.number}
+                        options={[
+                            { label: 'Min. Xec Order', value: minXecOrder || "N/A" },
+                            { label: 'Min. Token Order', value: minTokenOrder || "N/A" },
+                            { label: 'Min. Price In XEC', value: minPriceInXec || "N/A" },
+                            { label: 'Min. Price In USD', value: minPriceInUsd || "N/A" },
+                        ]}
+                        onChange={(value) => setAttributes({ number: value })}
+                    />
+                </PanelBody>
+            </InspectorControls>
         </div>
     );
 };
