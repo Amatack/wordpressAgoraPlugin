@@ -1,8 +1,8 @@
 {
 	"name": "plugin",
-	"version": "0.1.0",
-	"description": "Example block scaffolded with Create Block tool.",
-	"author": "The WordPress Contributors",
+	"version": "0.2.0",
+	"description": "Wordpress plugin to view token statistics from eCash Network",
+	"author": "Amatack",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"scripts": {
