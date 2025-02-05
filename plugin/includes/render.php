@@ -5,7 +5,10 @@ function fetch_data_from_graphql() {
     query TokenData {
         tokenData(tokenId: "faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820", include: { lastPrice: true, supply: true, marketCap: true, totalTxs: true }) {
             lastPrice {
+                minXecOrder
+                minTokenOrder
                 minPriceInXec
+                minPriceInUsd
             }
             supply
             marketCap
@@ -19,34 +22,45 @@ function fetch_data_from_graphql() {
             'Content-Type' => 'application/json',
         ),
         'body' => json_encode(array('query' => $query)),
+        'timeout' => 10, // Agregamos un tiempo de espera para evitar bloqueos
     ));
 
     if (is_wp_error($response)) {
+        error_log('GraphQL request failed: ' . $response->get_error_message());
+        return null;
+    }
+    
+    $data = wp_remote_retrieve_body($response);
+    $decoded_data = json_decode($data, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error_log('JSON decode error: ' . json_last_error_msg());
         return null;
     }
 
-    $data = wp_remote_retrieve_body($response);
-    return json_decode($data);
+    return $decoded_data;
 }
 
-// Variable global para almacenar los datos obtenidos
-$global_data = null;
-
-// Función para obtener los datos compartidos
 function get_shared_data() {
-    global $global_data;
-    if ($global_data === null) {
-        $global_data = fetch_data_from_graphql();
+    $cached_data = get_transient('graphql_token_data');
+
+    if ($cached_data === false) {
+        $cached_data = fetch_data_from_graphql();
+        if ($cached_data !== null) {
+            set_transient('graphql_token_data', $cached_data, 300);
+        }
     }
-    return $global_data;
+
+    return $cached_data;
 }
 
-// Render Callback para los bloques
+
+// Render Callback for the blocks
 function block_price_render_callback($attributes) {
     $data = get_shared_data();
 
     if (!$data || empty($data->data->tokenData)) {
-        return '<p>No se encontraron datos para el token especificado.</p>';
+        return '<p>No data found for the specified token.</p>';
     }
 
     $lastPrice = $data->data->tokenData->lastPrice;
@@ -61,77 +75,113 @@ function block_price_render_callback($attributes) {
     return $output;
 }
 
-function block_genesisInfo_render_callback($attributes) {
-    $data = get_shared_data();
-
-    $output = '<div class="block-two">';
-    if (!empty($data->data->locations->results)) {
-        foreach ($data->data->locations->results as $location) {
-            $output .= '<p>' . esc_html($location->name) . '</p>';
-        }
-    } else {
-        $output .= '<p>Failed to load data.</p>';
-    }
-    $output .= '</div>';
-
-    return $output;
-}
 
 function block_supply_render_callback($attributes) {
     $data = get_shared_data();
+    error_log(print_r($data, true));
 
-    if (!$data || empty($data->data->tokenData)) {
-        return '<p>No se encontraron datos para el token especificado.</p>';
+    if (!is_array($data) || empty($data['data']['tokenData'])) {
+        return '<p>No data found for the specified token.</p>';
     }
+    
+    $supply = $data['data']['tokenData']['supply'];
+    $output = '';
 
-    $supply = $data->data->tokenData->supply;
-    $output = '<div class="block-one">';
     if (!empty($supply)) {
         $output .= '<p>Supply: ' . esc_html($supply) . '</p>';
     } else {
         $output .= '<p>No data available for supply.</p>';
     }
-    $output .= '</div>';
 
-    return $output;
+    $textColor = isset($attributes['textColor']) ? esc_attr($attributes['textColor']) : '#000000';
+    $backgroundColor = isset($attributes['backgroundColor']) ? esc_attr($attributes['backgroundColor']) : '#ffffff';
+    $fontSize = isset($attributes['fontSize']) ? intval($attributes['fontSize']) : 16;
+    $hasBorder = isset($attributes['hasBorder']) && $attributes['hasBorder'] ? '2px solid black' : 'none';
+    $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
+    $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
+    return sprintf(
+        '<div class="block-one" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; padding: 10px; border-radius: %dpx;">
+            %s
+        </div>',
+        $textColor,
+        $backgroundColor,
+        $fontSize,
+        $hasBorder,
+        $isBold,
+        $borderRadius,
+        $output
+    );
 }
+
 
 function block_marketCap_render_callback($attributes) {
     $data = get_shared_data();
 
-    if (!$data || empty($data->data->tokenData)) {
-        return '<p>No se encontraron datos para el token especificado.</p>';
+    if (!is_array($data) || empty($data['data']['tokenData'])) {
+        return '<p>No data found for the specified token.</p>';
     }
 
-    $marketCap = $data->data->tokenData->marketCap;
-    $output = '<div class="block-one">';
+    $marketCap = $data['data']['tokenData']['marketCap'];
+    
+    $output = '';
     if (!empty($marketCap)) {
         $output .= '<p>Market Cap: ' . esc_html($marketCap) . '</p>';
     } else {
         $output .= '<p>No data available for market cap.</p>';
     }
-    $output .= '</div>';
-
-    return $output;
+    
+    $textColor = isset($attributes['textColor']) ? esc_attr($attributes['textColor']) : '#000000';
+    $backgroundColor = isset($attributes['backgroundColor']) ? esc_attr($attributes['backgroundColor']) : '#ffffff';
+    $fontSize = isset($attributes['fontSize']) ? intval($attributes['fontSize']) : 16;
+    $hasBorder = isset($attributes['hasBorder']) && $attributes['hasBorder'] ? '2px solid black' : 'none';
+    $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
+    $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
+    return sprintf(
+        '<div class="block-market-cap" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; padding: 10px; border-radius: %dpx;">
+            %s
+        </div>',
+        $textColor,
+        $backgroundColor,
+        $fontSize,
+        $hasBorder,
+        $isBold,
+        $borderRadius,
+        $output
+    );
 }
 
 function block_blockTotalTxs_render_callback($attributes){
     $data = get_shared_data();
-
-    if (!$data || empty($data->data->tokenData)) {
-        return '<p>No se encontraron datos para el token especificado.</p>';
+    error_log(print_r($data, true));
+    if (!is_array($data) || empty($data['data']['tokenData'])) {
+        return '<p>No data found for the specified token.</p>';
     }
-
-    $totalTxs = $data->data->tokenData->totalTxs;
-    $output = '<div class="block-totalTxs">';
+    $totalTxs = $data['data']['tokenData']['totalTxs'];
+    $output = '';
     if (!empty($totalTxs)) {
-        $output .= '<p>Total Txs: ' . esc_html($totalTxs) . '</p>';
+        $output .= '<p>' . esc_html($totalTxs) . '</p>';
     } else {
-        $output .= '<p>No data available for market cap.</p>';
+        $output .= '<p>No data available for totalTxs.</p>';
     }
-    $output .= '</div>';
 
-    return $output;
+    $textColor = isset($attributes['textColor']) ? esc_attr($attributes['textColor']) : '#000000';
+    $backgroundColor = isset($attributes['backgroundColor']) ? esc_attr($attributes['backgroundColor']) : '#ffffff';
+    $fontSize = isset($attributes['fontSize']) ? intval($attributes['fontSize']) : 16;
+    $hasBorder = isset($attributes['hasBorder']) && $attributes['hasBorder'] ? '2px solid black' : 'none';
+    $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
+    $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
+    return sprintf(
+        '<div class="block-totalTxs" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; padding: 10px; border-radius: %dpx;">
+            %s
+        </div>',
+        $textColor,
+        $backgroundColor,
+        $fontSize,
+        $hasBorder,
+        $isBold,
+        $borderRadius,
+        $output
+    );
 }
 
 
@@ -139,12 +189,12 @@ function mi_admin_page()
 {
     global $wpdb;
 
-    // Nombre de la tabla (usa el prefijo definido en WordPress)
+    // Table name (use the prefix defined in WordPress)
     $table_name = $wpdb->prefix . "agora_stats";
 
-    // Verificar si la tabla existe
+    // Check if table exists
     if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
-        // Crear la tabla si no existe
+        // Create table if it does not exist
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE $table_name (
@@ -187,16 +237,16 @@ function save_etoken_id() {
 
     $token_id = sanitize_text_field($_POST['token_id']);
 
-    // Validar que el token tenga exactamente 64 caracteres
+    // Validate that the token has exactly 64 characters
      if (strlen($token_id) !== 64) {
-        wp_send_json_error('El token es inválido. Debe tener exactamente 64 caracteres.');
+        wp_send_json_error('The token id is invalid. It must be exactly 64 characters long.');
     }
 
-    // Verificar si ya existe un registro en la tabla
+    // Check if a record already exists in the table
     $existing_entry = $wpdb->get_var("SELECT id FROM $table_name LIMIT 1");
 
     if ($existing_entry) {
-        // Si existe, actualizamos el registro
+        // If it exists, we update the record
         $updated = $wpdb->update(
             $table_name,
             ['token_id' => $token_id],
@@ -206,12 +256,12 @@ function save_etoken_id() {
         );
 
         if ($updated !== false) {
-            wp_send_json_success('Token actualizado correctamente.');
+            wp_send_json_success('Token updated successfully.');
         } else {
-            wp_send_json_error('Error al actualizar el token.');
+            wp_send_json_error('Error updating token.');
         }
     } else {
-        // Si no existe, insertamos un nuevo registro
+        // If it does not exist, we insert a new record
         $inserted = $wpdb->insert(
             $table_name,
             ['token_id' => $token_id],
@@ -219,9 +269,9 @@ function save_etoken_id() {
         );
 
         if ($inserted) {
-            wp_send_json_success('Token guardado correctamente.');
+            wp_send_json_success('Token saved successfully.');
         } else {
-            wp_send_json_error('Error al guardar el token.');
+            wp_send_json_error('Error saving token.');
         }
     }
 }
