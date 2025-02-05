@@ -1,9 +1,23 @@
 import { useEffect, useState } from '@wordpress/element';
-import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, RadioControl } from '@wordpress/components';
+import { ToggleControl, PanelBody, FontSizePicker,RadioControl, RangeControl } from '@wordpress/components';
+import { useBlockProps, InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
+import { __ } from '@wordpress/i18n';
 
 const Edit = ({ attributes, setAttributes }) => {
+    const {borderRadius, textColor, backgroundColor, fontSize, hasBorder, isBold } = attributes;
     const [data, setData] = useState(null);
+    
+    
+    const handleChange = (value) => {
+        let propertyName = "";
+    
+        if (value === minXecOrder) propertyName = "minXecOrder";
+        if (value === minTokenOrder) propertyName = "minTokenOrder";
+        if (value === minPriceInXec) propertyName = "minPriceInXec";
+        if (value === minPriceInUsd) propertyName = "minPriceInUsd";
+    
+        setAttributes({ number: value , propertyName: propertyName});
+    };
 
     useEffect(() => {
         const query = `
@@ -46,13 +60,14 @@ const Edit = ({ attributes, setAttributes }) => {
             });
     }, []);
 
-    // Verifica que los datos existen antes de desestructurar
+    const blockProps = useBlockProps({ 
+        style: { color: textColor, backgroundColor, fontSize: `${fontSize}px`, border: hasBorder ? '2px solid black' : 'none', fontWeight: isBold ? 'bold' : 'normal', padding: '10px',borderRadius: borderRadius + 'px', }
+    });
+
     const { minXecOrder, minTokenOrder, minPriceInXec, minPriceInUsd } = data || {};
 
     return (
         <div>
-            <h2>{attributes.number || "[Select Option]"}</h2>
-
             <InspectorControls>
                 <PanelBody title="Data from Agora">
                     <RadioControl
@@ -64,10 +79,28 @@ const Edit = ({ attributes, setAttributes }) => {
                             { label: 'Min. Price In XEC', value: minPriceInXec || "N/A" },
                             { label: 'Min. Price In USD', value: minPriceInUsd || "N/A" },
                         ]}
-                        onChange={(value) => setAttributes({ number: value })}
+                        onChange={handleChange}
                     />
+                    <FontSizePicker value={fontSize} onChange={(newSize) => setAttributes({ fontSize: newSize })} min={10} max={50} />
+                    <PanelColorSettings colorSettings={[
+                        { value: textColor, onChange: (newColor) => setAttributes({ textColor: newColor }), label: __('Color de texto', 'text-domain') },
+                        { value: backgroundColor, onChange: (newColor) => setAttributes({ backgroundColor: newColor }), label: __('Color de fondo', 'text-domain') }
+                    ]}/>
+                    
+                    <ToggleControl label={__('Borde', 'text-domain')} checked={hasBorder} onChange={() => setAttributes({ hasBorder: !hasBorder })} />
+                    <RangeControl
+                        label="Radio del borde"
+                        value={borderRadius}
+                        onChange={(newRadius) => setAttributes({ borderRadius: newRadius })}
+                        min={0}
+                        max={50}
+                    />
+                    <ToggleControl label={__('Negrita', 'text-domain')} checked={isBold} onChange={() => setAttributes({ isBold: !isBold })} />
                 </PanelBody>
             </InspectorControls>
+            <div {...blockProps}>
+                <p>{attributes.number || "[Select Option]"}</p>
+            </div>
         </div>
     );
 };

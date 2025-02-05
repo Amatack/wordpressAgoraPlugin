@@ -59,20 +59,40 @@ function get_shared_data() {
 function block_price_render_callback($attributes) {
     $data = get_shared_data();
 
-    if (!$data || empty($data->data->tokenData)) {
+    if (!is_array($data) || empty($data['data']['tokenData'])) {
         return '<p>No data found for the specified token.</p>';
     }
+    $lastPrice = $data['data']['tokenData']['lastPrice'];
 
-    $lastPrice = $data->data->tokenData->lastPrice;
-    $output = '<div class="block-one">';
-    if (!empty($lastPrice)) {
-        $output .= '<p>Price: ' . esc_html($lastPrice->minPriceInXec) . '</p>';
+    $output = '';
+    $priceKey = isset($attributes['propertyName']) ? $attributes['propertyName'] : ''; // Valor por defecto
+
+    if (is_array($lastPrice) && isset($lastPrice[$priceKey])) {
+        $priceValue = $lastPrice[$priceKey]; // Acceso dinámico en array
     } else {
-        $output .= '<p>No data available for price.</p>';
+        $priceValue = 'N/A'; // Valor por defecto si no existe
     }
-    $output .= '</div>';
 
-    return $output;
+    $output = '<p>Price: ' . esc_html($priceValue) . '</p>';
+
+    $textColor = isset($attributes['textColor']) ? esc_attr($attributes['textColor']) : '#000000';
+    $backgroundColor = isset($attributes['backgroundColor']) ? esc_attr($attributes['backgroundColor']) : '#ffffff';
+    $fontSize = isset($attributes['fontSize']) ? intval($attributes['fontSize']) : 16;
+    $hasBorder = isset($attributes['hasBorder']) && $attributes['hasBorder'] ? '2px solid black' : 'none';
+    $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
+    $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
+    return sprintf(
+        '<div cclass="block-lastPrice" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; padding: 10px; border-radius: %dpx;">
+            %s
+        </div>',
+        $textColor,
+        $backgroundColor,
+        $fontSize,
+        $hasBorder,
+        $isBold,
+        $borderRadius,
+        $output
+    );
 }
 
 
