@@ -61,8 +61,8 @@ export async function getLastPrice(agora, tokenId){
             return {
                 minXecOrder: priceOfMinOrder + " XEC",
                 minTokenOrder: takeTokenSatoshis.toString(),
-                minPriceInXec: minPriceInXec.toString(),
-                minPriceInUsd: !xecValue ? 'Error' : minPriceInUsd.toFixed(5)
+                minPriceInXec: minPriceInXec.toString()+ " XEC",
+                minPriceInUsd: !xecValue ? 'Error' : minPriceInUsd.toFixed(5) + " USD"
             }
     } catch (error) {
         console.error('error getting price: ', error)
