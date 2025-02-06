@@ -1,9 +1,20 @@
 <?php
 
 function fetch_data_from_graphql() {
-    $query = <<<GRAPHQL
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'agora_stats';
+
+    // Get token_id from database
+    $token_id = $wpdb->get_var("SELECT token_id FROM $table_name LIMIT 1");
+
+    // If not found, display message
+    if (!$token_id) {
+        return '<p>No token_id found.</p>';
+    }
+
+    $query = sprintf(<<<GRAPHQL
     query TokenData {
-        tokenData(tokenId: "faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820", include: { lastPrice: true, supply: true, marketCap: true, totalTxs: true }) {
+        tokenData(tokenId: "%s", include: { lastPrice: true, supply: true, marketCap: true, totalTxs: true }) {
             lastPrice {
                 minXecOrder
                 minTokenOrder
@@ -15,7 +26,7 @@ function fetch_data_from_graphql() {
             totalTxs
         }
     }
-    GRAPHQL;
+    GRAPHQL, $token_id);
     
     $response = wp_remote_post('https://wordpressagoraplugin-production.up.railway.app/graphql', array(
         'headers' => array(
@@ -44,15 +55,24 @@ function fetch_data_from_graphql() {
 function get_shared_data() {
     $cached_data = get_transient('graphql_token_data');
 
-    if ($cached_data === false) {
-        $cached_data = fetch_data_from_graphql();
-        if ($cached_data !== null) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'agora_stats';
+    $current_token_id = $wpdb->get_var("SELECT token_id FROM $table_name LIMIT 1");
+
+    if ($cached_data === false || !isset($cached_data['token_id']) || $cached_data['token_id'] !== $current_token_id) {
+        $data = fetch_data_from_graphql();
+        if ($data !== null) {
+            $cached_data = [
+                'token_id' => $current_token_id,
+                'data' => $data
+            ];
             set_transient('graphql_token_data', $cached_data, 300);
         }
     }
 
-    return $cached_data;
+    return $cached_data ? $cached_data['data'] : null;
 }
+
 
 
 // Render Callback for the blocks
@@ -73,7 +93,7 @@ function block_price_render_callback($attributes) {
         $priceValue = 'N/A'; // Valor por defecto si no existe
     }
 
-    $output = '<p>Price: ' . esc_html($priceValue) . '</p>';
+    $output = '<p>' . esc_html($priceValue) . '</p>';
 
     $textColor = isset($attributes['textColor']) ? esc_attr($attributes['textColor']) : '#000000';
     $backgroundColor = isset($attributes['backgroundColor']) ? esc_attr($attributes['backgroundColor']) : '#ffffff';
@@ -108,7 +128,7 @@ function block_supply_render_callback($attributes) {
     $output = '';
 
     if (!empty($supply)) {
-        $output .= '<p>Supply: ' . esc_html($supply) . '</p>';
+        $output .= '<p>' . esc_html($supply) . '</p>';
     } else {
         $output .= '<p>No data available for supply.</p>';
     }
@@ -145,7 +165,7 @@ function block_marketCap_render_callback($attributes) {
     
     $output = '';
     if (!empty($marketCap)) {
-        $output .= '<p>Market Cap: ' . esc_html($marketCap) . '</p>';
+        $output .= '<p>' . esc_html($marketCap) . '</p>';
     } else {
         $output .= '<p>No data available for market cap.</p>';
     }
@@ -205,6 +225,7 @@ function block_blockTotalTxs_render_callback($attributes){
 }
 
 
+//On Editor
 function mi_admin_page()
 {
     global $wpdb;
@@ -294,4 +315,17 @@ function save_etoken_id() {
             wp_send_json_error('Error saving token.');
         }
     }
+}
+
+function get_token_id_on_editor() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'agora_stats';
+    $result = $wpdb->get_var("SELECT token_id FROM $table_name LIMIT 1");
+
+    if ($result) {
+        wp_send_json_success(['token_id' => $result]);
+    } else {
+        wp_send_json_error(['message' => 'No token found']);
+    }
+    wp_die();
 }

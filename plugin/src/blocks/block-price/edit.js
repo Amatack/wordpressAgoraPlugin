@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 const Edit = ({ attributes, setAttributes }) => {
     const {borderRadius, textColor, backgroundColor, fontSize, hasBorder, isBold } = attributes;
     const [data, setData] = useState(null);
-    
+    const [tokenId, setTokenId] = useState(null);
     
     const handleChange = (value) => {
         let propertyName = "";
@@ -20,6 +20,27 @@ const Edit = ({ attributes, setAttributes }) => {
     };
 
     useEffect(() => {
+        // Obtener el token_id desde el backend
+        fetch(window.location.origin+'/wordpress/wp-admin/admin-ajax.php?action=get_token_id_on_editor')
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.data.token_id) {
+                    setTokenId(result.data.token_id);
+                } else {
+                    console.error("Error obteniendo token_id:", result);
+                    setLoading(false);
+                }
+            })
+            .catch(error => {
+                console.error("Error en la petición AJAX:", error);
+                setLoading(false);
+            });
+    }, []);
+
+    useEffect(() => {
+
+        if (!tokenId) return;
+
         const query = `
             query TokenData($tokenId: String!, $include: TokenDataIncludeInput!) {
                 tokenData(tokenId: $tokenId, include: $include) {
@@ -34,7 +55,7 @@ const Edit = ({ attributes, setAttributes }) => {
         `;
 
         const variables = {
-            tokenId: "faaecf2e79d897769ef6a0e8b5ee5dd5bb7daa5a632db677f254a94ae122c820",
+            tokenId:  tokenId,
             include: {
                 lastPrice: true,
             },
@@ -58,7 +79,7 @@ const Edit = ({ attributes, setAttributes }) => {
             .catch((error) => {
                 console.error('Error fetching GraphQL data:', error);
             });
-    }, []);
+    }, [tokenId]);
 
     const blockProps = useBlockProps({ 
         style: { color: textColor, backgroundColor, fontSize: `${fontSize}px`, border: hasBorder ? '2px solid black' : 'none', fontWeight: isBold ? 'bold' : 'normal', padding: '10px',borderRadius: borderRadius + 'px', }
