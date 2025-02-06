@@ -100,3 +100,7 @@ add_action('admin_menu', 'agora_stats_add_admin_page');
 //register and queue for the administration area
 add_action('admin_enqueue_scripts', 'mi_plugin_enqueue_styles');
 
+// Register the function in AJAX (for logged in and non logged in users)
+add_action('wp_ajax_get_token_id_on_editor', 'get_token_id_on_editor');
+add_action('wp_ajax_nopriv_get_token_id_on_editor', 'get_token_id_on_editor');
+
