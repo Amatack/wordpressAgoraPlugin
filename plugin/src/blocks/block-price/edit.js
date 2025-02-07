@@ -126,19 +126,19 @@ const Edit = ({ attributes, setAttributes }) => {
                     />
                     <FontSizePicker value={fontSize} onChange={(newSize) => setAttributes({ fontSize: newSize })} min={10} max={50} />
                     <PanelColorSettings colorSettings={[
-                        { value: textColor, onChange: (newColor) => setAttributes({ textColor: newColor }), label: __('Color de texto', 'text-domain') },
-                        { value: backgroundColor, onChange: (newColor) => setAttributes({ backgroundColor: newColor }), label: __('Color de fondo', 'text-domain') }
+                        { value: textColor, onChange: (newColor) => setAttributes({ textColor: newColor }), label: __('Text color', 'text-domain') },
+                        { value: backgroundColor, onChange: (newColor) => setAttributes({ backgroundColor: newColor }), label: __('Background color', 'text-domain') }
                     ]}/>
                     
-                    <ToggleControl label={__('Borde', 'text-domain')} checked={hasBorder} onChange={() => setAttributes({ hasBorder: !hasBorder })} />
+                    <ToggleControl label={__('Border', 'text-domain')} checked={hasBorder} onChange={() => setAttributes({ hasBorder: !hasBorder })} />
                     <RangeControl
-                        label="Radio del borde"
+                        label="Border radius"
                         value={borderRadius}
                         onChange={(newRadius) => setAttributes({ borderRadius: newRadius })}
                         min={0}
                         max={50}
                     />
-                    <ToggleControl label={__('Negrita', 'text-domain')} checked={isBold} onChange={() => setAttributes({ isBold: !isBold })} />
+                    <ToggleControl label={__('Bold', 'text-domain')} checked={isBold} onChange={() => setAttributes({ isBold: !isBold })} />
                 </PanelBody>
             </InspectorControls>
             <div {...blockProps}>
