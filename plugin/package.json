@@ -1,6 +1,6 @@
 {
 	"name": "plugin",
-	"version": "0.3.0",
+	"version": "1.0.0",
 	"description": "Wordpress plugin to view token statistics from eCash Network",
 	"author": "Amatack",
 	"license": "GPL-2.0-or-later",

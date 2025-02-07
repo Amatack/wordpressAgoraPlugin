@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Agora Stats
  * Description: Shows agora statistics about your token.
- * Version: 0.1.0
+ * Version: 1.0.0
  * Author: Amatack
  */
     
