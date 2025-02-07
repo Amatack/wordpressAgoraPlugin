@@ -1,6 +1,6 @@
 {
 	"name": "plugin",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Wordpress plugin to view token statistics from eCash Network",
 	"author": "Amatack",
 	"license": "GPL-2.0-or-later",
@@ -12,7 +12,8 @@
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
 		"plugin-zip": "wp-scripts plugin-zip",
-		"start": "wp-scripts start"
+		"start": "wp-scripts start",
+		"zip": "zip -r plugin.zip plugin -x 'plugin/node_modules/*' 'plugin/.gitignore'"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^30.6.0"
