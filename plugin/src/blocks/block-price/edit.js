@@ -82,7 +82,7 @@ const Edit = ({ attributes, setAttributes }) => {
     }, [tokenId]);
 
     const blockProps = useBlockProps({ 
-        style: { color: textColor, backgroundColor, fontSize: `${fontSize}px`, border: hasBorder ? '2px solid black' : 'none', fontWeight: isBold ? 'bold' : 'normal', padding: '10px',borderRadius: borderRadius + 'px', }
+        style: { color: textColor, backgroundColor, fontSize: `${fontSize}px`, border: hasBorder ? '2px solid black' : 'none', fontWeight: isBold ? 'bold' : 'normal', borderRadius: borderRadius + 'px', }
     });
 
     const { minXecOrder, minTokenOrder, minPriceInXec, minPriceInUsd } = data || {};

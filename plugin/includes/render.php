@@ -102,7 +102,7 @@ function block_price_render_callback($attributes) {
     $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
     $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
     return sprintf(
-        '<div cclass="block-lastPrice" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; padding: 10px; border-radius: %dpx;">
+        '<div cclass="block-lastPrice" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
         $textColor,
@@ -140,7 +140,7 @@ function block_supply_render_callback($attributes) {
     $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
     $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
     return sprintf(
-        '<div class="block-one" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; padding: 10px; border-radius: %dpx;">
+        '<div class="block-one" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
         $textColor,
@@ -177,7 +177,7 @@ function block_marketCap_render_callback($attributes) {
     $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
     $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
     return sprintf(
-        '<div class="block-market-cap" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; padding: 10px; border-radius: %dpx;">
+        '<div class="block-market-cap" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
         $textColor,
@@ -211,7 +211,7 @@ function block_blockTotalTxs_render_callback($attributes){
     $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
     $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
     return sprintf(
-        '<div class="block-totalTxs" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; padding: 10px; border-radius: %dpx;">
+        '<div class="block-totalTxs" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
         $textColor,
