@@ -11,22 +11,44 @@ const Edit = ({attributes, setAttributes}) => {
     const [tokenId, setTokenId] = useState(null);
     
     useEffect(() => {
-        // 1️⃣ Obtener el token_id desde el backend
-        fetch(window.location.origin+'/wordpress/wp-admin/admin-ajax.php?action=get_token_id_on_editor')
-            .then(response => response.json())
+        const possibleURLs = [
+          window.location.origin + '/wordpress/wp-admin/admin-ajax.php?action=get_token_id_on_editor',
+          window.location.origin + '/wp-admin/admin-ajax.php?action=get_token_id_on_editor'
+        ];
+    
+        const testUrl = (index = 0) => {
+          if (index >= possibleURLs.length) {
+            console.error("Failed to get token_id after trying several URLs.");
+            setLoading(false);
+            return;
+          }
+    
+          const urlActual = possibleURLs[index];
+    
+          fetch(urlActual)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`Error ${response.status} al intentar ${urlActual}`); // Mejora el manejo de errores
+              }
+              return response.json();
+            })
             .then(result => {
-                if (result.success && result.data.token_id) {
-                    setTokenId(result.data.token_id);
-                } else {
-                    console.error("Error obteniendo token_id:", result);
-                    setLoading(false);
-                }
+              if (result.success && result.data.token_id) {
+                setTokenId(result.data.token_id);
+                setLoading(false);
+              } else {
+                console.error(`Error getting token_id from ${urlActual}:`, result);
+                testUrl(index + 1); // Test next URL
+              }
             })
             .catch(error => {
-                console.error("Error en la petición AJAX:", error);
-                setLoading(false);
+              console.error(`Error in AJAX request to ${urlActual}:`, error);
+              testUrl(index + 1); // Test next URL
             });
-    }, []);
+        };
+    
+        testUrl(); 
+      }, []);
 
     useEffect(() => {
         if (!tokenId) return;

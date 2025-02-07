@@ -11,19 +11,19 @@ const Edit = ({attributes, setAttributes}) => {
     const [loading, setLoading] = useState(true);
     
     useEffect(() => {
-        const posiblesUrls = [
+        const possibleURLs = [
           window.location.origin + '/wordpress/wp-admin/admin-ajax.php?action=get_token_id_on_editor',
           window.location.origin + '/wp-admin/admin-ajax.php?action=get_token_id_on_editor'
         ];
     
-        const probarUrl = (index = 0) => {
-          if (index >= posiblesUrls.length) {
-            console.error("No se pudo obtener el token_id después de probar varias URLs.");
+        const testUrl = (index = 0) => {
+          if (index >= possibleURLs.length) {
+            console.error("Failed to get token_id after trying several URLs.");
             setLoading(false);
             return;
           }
     
-          const urlActual = posiblesUrls[index];
+          const urlActual = possibleURLs[index];
     
           fetch(urlActual)
             .then(response => {
@@ -37,17 +37,17 @@ const Edit = ({attributes, setAttributes}) => {
                 setTokenId(result.data.token_id);
                 setLoading(false);
               } else {
-                console.error(`Error obteniendo token_id desde ${urlActual}:`, result);
-                probarUrl(index + 1); // Prueba la siguiente URL
+                console.error(`Error getting token_id from ${urlActual}:`, result);
+                testUrl(index + 1); // Test next URL
               }
             })
             .catch(error => {
-              console.error(`Error en la petición AJAX a ${urlActual}:`, error);
-              probarUrl(index + 1); // Prueba la siguiente URL
+              console.error(`Error in AJAX request to ${urlActual}:`, error);
+              testUrl(index + 1); // Test next URL
             });
         };
     
-        probarUrl(); // Inicia la prueba de URLs
+        testUrl(); 
       }, []);
 
     useEffect(() => {
