@@ -1,9 +1,13 @@
 <?php
 /**
  * Plugin Name: Agora Stats
+ * Plugin URI: https://github.com/Amatack/wordpressAgoraPlugin
  * Description: Shows agora statistics about your token.
  * Version: 1.0.0
  * Author: Amatack
+ * Author URI: https://github.com/Amatack/
+ * License: GPL2
+ * Text Domain: agora-stats
  */
     
  if ( ! defined( 'ABSPATH' ) ) {
