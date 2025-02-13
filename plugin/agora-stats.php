@@ -13,9 +13,13 @@
  if ( ! defined( 'ABSPATH' ) ) {
     exit;
     }
-    
+
+add_shortcode('etoken_price_data', 'price_data_shortcode_handler');
+add_shortcode('etoken_supply', 'supply_shortcode_handler');
+add_shortcode('etoken_market_cap', 'market_cap_shortcode_handler');
+add_shortcode('etoken_total_txs', 'total_txs_shortcode_handler');
+
  function my_dynamic_block_plugin_register_blocks() {
-    
     
     add_action('wp_ajax_save_etoken_id', 'save_etoken_id');
     add_action('wp_ajax_nopriv_save_etoken_id', 'save_etoken_id');
@@ -57,7 +61,7 @@
     register_block_type(
         'agora-stats/block-total-txs',
         array(
-            'render_callback' => 'block_blockTotalTxs_render_callback',
+            'render_callback' => 'block_total_txs_render_callback',
         )
     );
 }

@@ -76,7 +76,7 @@ function get_shared_data() {
 
 
 // Render Callback for the blocks
-function block_price_render_callback($attributes) {
+function block_price_render_callback($attributes, $shortcodeAtributes, $propertyName) {
     $data = get_shared_data();
 
     if (!is_array($data) || empty($data['data']['tokenData'])) {
@@ -85,7 +85,9 @@ function block_price_render_callback($attributes) {
     $lastPrice = $data['data']['tokenData']['lastPrice'];
 
     $output = '';
-    $priceKey = isset($attributes['propertyName']) ? $attributes['propertyName'] : ''; // Valor por defecto
+    $priceKey = isset($attributes['propertyName']) 
+    ? $attributes['propertyName'] 
+    : $propertyName; // Valor por defecto
 
     if (is_array($lastPrice) && isset($lastPrice[$priceKey])) {
         $priceValue = $lastPrice[$priceKey]; // Acceso dinámico en array
@@ -94,15 +96,33 @@ function block_price_render_callback($attributes) {
     }
 
     $output = '<p>' . esc_html($priceValue) . '</p>';
+    
+    $textColor = isset($attributes['textColor']) 
+    ? esc_attr($attributes['textColor']) 
+    : (isset($shortcodeAtributes['textcolor']) ? esc_attr($shortcodeAtributes['textcolor']) : '#000000');
 
-    $textColor = isset($attributes['textColor']) ? esc_attr($attributes['textColor']) : '#000000';
-    $backgroundColor = isset($attributes['backgroundColor']) ? esc_attr($attributes['backgroundColor']) : '#ffffff';
-    $fontSize = isset($attributes['fontSize']) ? intval($attributes['fontSize']) : 16;
-    $hasBorder = isset($attributes['hasBorder']) && $attributes['hasBorder'] ? '2px solid black' : 'none';
-    $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
-    $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
-    return sprintf(
-        '<div cclass="block-lastPrice" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
+    $backgroundColor = isset($attributes['backgroundColor']) 
+    ? esc_attr($attributes['backgroundColor']) 
+    : (isset($shortcodeAtributes['backgroundcolor']) ? esc_attr($shortcodeAtributes['backgroundcolor']) : '#ffffff');
+    
+    $fontSize = isset($attributes['fontSize']) 
+    ? esc_attr($attributes['fontSize']) 
+    : (isset($shortcodeAtributes['fontsize']) ? esc_attr($shortcodeAtributes['fontsize']) : '16');
+
+    $hasBorder = isset($attributes['hasBorder']) 
+    ? esc_attr($attributes['hasBorder']) 
+    : (isset($shortcodeAtributes['hasborder']) ? esc_attr($shortcodeAtributes['hasborder']) : 'none');
+
+    $isBold = isset($attributes['isBold']) 
+    ? esc_attr($attributes['isBold']) 
+    : (isset($shortcodeAtributes['isbold']) ? esc_attr($shortcodeAtributes['isbold']) : 'normal');
+
+    $borderRadius = isset($attributes['borderRadius']) 
+    ? esc_attr($attributes['borderRadius']) 
+    : (isset($shortcodeAtributes['borderradius']) ? esc_attr($shortcodeAtributes['borderradius']) : '0');
+
+    $block_content = sprintf(
+        '<div class="block-lastPrice" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
         $textColor,
@@ -113,13 +133,32 @@ function block_price_render_callback($attributes) {
         $borderRadius,
         $output
     );
+    return $block_content ;
 }
 
+function price_data_shortcode_handler($atts) {
+    $atts = shortcode_atts(
+        array(
+            'textcolor' => '', 
+            'backgroundcolor' => '',
+            'fontsize' => "16",
+            'hasborder' => false,
+            'isbold' => false,
+            'borderradius' => "0",
+            'propertyname' => "minXecOrder",
+        ),
+        array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
+    );
 
-function block_supply_render_callback($attributes) {
+    $propertyName = $atts['propertyname'];
+    return block_price_render_callback($atts, $atts, $propertyName);
+}
+
+function block_supply_render_callback($attributes, $shortcodeAtributes) {
     $data = get_shared_data();
-    error_log(print_r($data, true));
-
+    error_log("shortcodeAtributes: ");
+    error_log(print_r($shortcodeAtributes, true));
+    
     if (!is_array($data) || empty($data['data']['tokenData'])) {
         return '<p>No data found for the specified token.</p>';
     }
@@ -133,13 +172,31 @@ function block_supply_render_callback($attributes) {
         $output .= '<p>No data available for supply.</p>';
     }
 
-    $textColor = isset($attributes['textColor']) ? esc_attr($attributes['textColor']) : '#000000';
-    $backgroundColor = isset($attributes['backgroundColor']) ? esc_attr($attributes['backgroundColor']) : '#ffffff';
-    $fontSize = isset($attributes['fontSize']) ? intval($attributes['fontSize']) : 16;
-    $hasBorder = isset($attributes['hasBorder']) && $attributes['hasBorder'] ? '2px solid black' : 'none';
-    $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
-    $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
-    return sprintf(
+    $textColor = isset($attributes['textColor']) 
+    ? esc_attr($attributes['textColor']) 
+    : (isset($shortcodeAtributes['textcolor']) ? esc_attr($shortcodeAtributes['textcolor']) : '#000000');
+
+    $backgroundColor = isset($attributes['backgroundColor']) 
+    ? esc_attr($attributes['backgroundColor']) 
+    : (isset($shortcodeAtributes['backgroundcolor']) ? esc_attr($shortcodeAtributes['backgroundcolor']) : '#ffffff');
+    
+    $fontSize = isset($attributes['fontSize']) 
+    ? esc_attr($attributes['fontSize']) 
+    : (isset($shortcodeAtributes['fontsize']) ? esc_attr($shortcodeAtributes['fontsize']) : '16');
+
+    $hasBorder = isset($attributes['hasBorder']) 
+    ? esc_attr($attributes['hasBorder']) 
+    : (isset($shortcodeAtributes['hasborder']) ? esc_attr($shortcodeAtributes['hasborder']) : 'none');
+
+    $isBold = isset($attributes['isBold']) 
+    ? esc_attr($attributes['isBold']) 
+    : (isset($shortcodeAtributes['isbold']) ? esc_attr($shortcodeAtributes['isbold']) : 'normal');
+
+    $borderRadius = isset($attributes['borderRadius']) 
+    ? esc_attr($attributes['borderRadius']) 
+    : (isset($shortcodeAtributes['borderradius']) ? esc_attr($shortcodeAtributes['borderradius']) : '0');
+
+    $block_content = sprintf(
         '<div class="block-one" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
@@ -151,10 +208,27 @@ function block_supply_render_callback($attributes) {
         $borderRadius,
         $output
     );
+    return $block_content ;
 }
 
+function supply_shortcode_handler($atts) {
+    $atts = shortcode_atts(
+        array(
+            'textcolor' => '', 
+            'backgroundcolor' => '',
+            'fontsize' => "16",
+            'hasborder' => false,
+            'isbold' => false,
+            'borderradius' => "0"
+        ),
+        array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
+    );
 
-function block_marketCap_render_callback($attributes) {
+
+    return block_supply_render_callback($atts, $atts);
+}
+
+function block_marketCap_render_callback($attributes, $shortcodeAtributes) {
     $data = get_shared_data();
 
     if (!is_array($data) || empty($data['data']['tokenData'])) {
@@ -170,14 +244,32 @@ function block_marketCap_render_callback($attributes) {
         $output .= '<p>No data available for market cap.</p>';
     }
     
-    $textColor = isset($attributes['textColor']) ? esc_attr($attributes['textColor']) : '#000000';
-    $backgroundColor = isset($attributes['backgroundColor']) ? esc_attr($attributes['backgroundColor']) : '#ffffff';
-    $fontSize = isset($attributes['fontSize']) ? intval($attributes['fontSize']) : 16;
-    $hasBorder = isset($attributes['hasBorder']) && $attributes['hasBorder'] ? '2px solid black' : 'none';
-    $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
-    $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
-    return sprintf(
-        '<div class="block-market-cap" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
+    $textColor = isset($attributes['textColor']) 
+    ? esc_attr($attributes['textColor']) 
+    : (isset($shortcodeAtributes['textcolor']) ? esc_attr($shortcodeAtributes['textcolor']) : '#000000');
+
+    $backgroundColor = isset($attributes['backgroundColor']) 
+    ? esc_attr($attributes['backgroundColor']) 
+    : (isset($shortcodeAtributes['backgroundcolor']) ? esc_attr($shortcodeAtributes['backgroundcolor']) : '#ffffff');
+    
+    $fontSize = isset($attributes['fontSize']) 
+    ? esc_attr($attributes['fontSize']) 
+    : (isset($shortcodeAtributes['fontsize']) ? esc_attr($shortcodeAtributes['fontsize']) : '16');
+
+    $hasBorder = isset($attributes['hasBorder']) 
+    ? esc_attr($attributes['hasBorder']) 
+    : (isset($shortcodeAtributes['hasborder']) ? esc_attr($shortcodeAtributes['hasborder']) : 'none');
+
+    $isBold = isset($attributes['isBold']) 
+    ? esc_attr($attributes['isBold']) 
+    : (isset($shortcodeAtributes['isbold']) ? esc_attr($shortcodeAtributes['isbold']) : 'normal');
+
+    $borderRadius = isset($attributes['borderRadius']) 
+    ? esc_attr($attributes['borderRadius']) 
+    : (isset($shortcodeAtributes['borderradius']) ? esc_attr($shortcodeAtributes['borderradius']) : '0');
+
+    $block_content = sprintf(
+        '<div class="block-one" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
         $textColor,
@@ -188,9 +280,27 @@ function block_marketCap_render_callback($attributes) {
         $borderRadius,
         $output
     );
+    return $block_content ;
 }
 
-function block_blockTotalTxs_render_callback($attributes){
+function market_cap_shortcode_handler($atts) {
+    $atts = shortcode_atts(
+        array(
+            'textcolor' => '', 
+            'backgroundcolor' => '',
+            'fontsize' => "16",
+            'hasborder' => false,
+            'isbold' => false,
+            'borderradius' => "0"
+        ),
+        array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
+    );
+
+
+    return block_marketCap_render_callback($atts, $atts);
+}
+
+function block_total_txs_render_callback($attributes, $shortcodeAtributes){
     $data = get_shared_data();
     error_log(print_r($data, true));
     if (!is_array($data) || empty($data['data']['tokenData'])) {
@@ -204,13 +314,31 @@ function block_blockTotalTxs_render_callback($attributes){
         $output .= '<p>No data available for totalTxs.</p>';
     }
 
-    $textColor = isset($attributes['textColor']) ? esc_attr($attributes['textColor']) : '#000000';
-    $backgroundColor = isset($attributes['backgroundColor']) ? esc_attr($attributes['backgroundColor']) : '#ffffff';
-    $fontSize = isset($attributes['fontSize']) ? intval($attributes['fontSize']) : 16;
-    $hasBorder = isset($attributes['hasBorder']) && $attributes['hasBorder'] ? '2px solid black' : 'none';
-    $isBold = isset($attributes['isBold']) && $attributes['isBold'] ? 'bold' : 'normal';
-    $borderRadius = isset($attributes['borderRadius']) ? intval($attributes['borderRadius']) : 0; 
-    return sprintf(
+    $textColor = isset($attributes['textColor']) 
+    ? esc_attr($attributes['textColor']) 
+    : (isset($shortcodeAtributes['textcolor']) ? esc_attr($shortcodeAtributes['textcolor']) : '#000000');
+
+    $backgroundColor = isset($attributes['backgroundColor']) 
+    ? esc_attr($attributes['backgroundColor']) 
+    : (isset($shortcodeAtributes['backgroundcolor']) ? esc_attr($shortcodeAtributes['backgroundcolor']) : '#ffffff');
+    
+    $fontSize = isset($attributes['fontSize']) 
+    ? esc_attr($attributes['fontSize']) 
+    : (isset($shortcodeAtributes['fontsize']) ? esc_attr($shortcodeAtributes['fontsize']) : '16');
+
+    $hasBorder = isset($attributes['hasBorder']) 
+    ? esc_attr($attributes['hasBorder']) 
+    : (isset($shortcodeAtributes['hasborder']) ? esc_attr($shortcodeAtributes['hasborder']) : 'none');
+
+    $isBold = isset($attributes['isBold']) 
+    ? esc_attr($attributes['isBold']) 
+    : (isset($shortcodeAtributes['isbold']) ? esc_attr($shortcodeAtributes['isbold']) : 'normal');
+
+    $borderRadius = isset($attributes['borderRadius']) 
+    ? esc_attr($attributes['borderRadius']) 
+    : (isset($shortcodeAtributes['borderradius']) ? esc_attr($shortcodeAtributes['borderradius']) : '0');
+
+    $block_content = sprintf(
         '<div class="block-totalTxs" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
@@ -222,8 +350,27 @@ function block_blockTotalTxs_render_callback($attributes){
         $borderRadius,
         $output
     );
+    return $block_content ;
 }
 
+
+
+function total_txs_shortcode_handler($atts) {
+    $atts = shortcode_atts(
+        array(
+            'textcolor' => '', 
+            'backgroundcolor' => '',
+            'fontsize' => "16",
+            'hasborder' => false,
+            'isbold' => false,
+            'borderradius' => "0"
+        ),
+        array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
+    );
+
+
+    return block_total_txs_render_callback($atts, $atts);
+}
 
 //On Editor
 function mi_admin_page()
