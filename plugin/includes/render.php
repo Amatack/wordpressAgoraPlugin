@@ -97,6 +97,10 @@ function block_price_render_callback($attributes, $shortcodeAtributes, $property
 
     $output = '<p>' . esc_html($priceValue) . '</p>';
     
+    $alignment = isset($attributes['alignment']) 
+    ? esc_attr($attributes['alignment']) 
+    : (isset($shortcodeAtributes['alignment']) ? esc_attr($shortcodeAtributes['alignment']) : 'left');
+
     $textColor = isset($attributes['textColor']) 
     ? esc_attr($attributes['textColor']) 
     : (isset($shortcodeAtributes['textcolor']) ? esc_attr($shortcodeAtributes['textcolor']) : '#000000');
@@ -122,9 +126,10 @@ function block_price_render_callback($attributes, $shortcodeAtributes, $property
     : (isset($shortcodeAtributes['borderradius']) ? esc_attr($shortcodeAtributes['borderradius']) : '0');
 
     $block_content = sprintf(
-        '<div class="block-lastPrice" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
+        '<div class="block-lastPrice" style="text-align: %s;color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
+        $alignment,
         $textColor,
         $backgroundColor,
         $fontSize,
@@ -139,6 +144,7 @@ function block_price_render_callback($attributes, $shortcodeAtributes, $property
 function price_data_shortcode_handler($atts) {
     $atts = shortcode_atts(
         array(
+            'alignment' => 'left',
             'textcolor' => '', 
             'backgroundcolor' => '',
             'fontsize' => "16",
@@ -172,6 +178,10 @@ function block_supply_render_callback($attributes, $shortcodeAtributes) {
         $output .= '<p>No data available for supply.</p>';
     }
 
+    $alignment = isset($attributes['alignment']) 
+    ? esc_attr($attributes['alignment']) 
+    : (isset($shortcodeAtributes['alignment']) ? esc_attr($shortcodeAtributes['alignment']) : 'left');
+
     $textColor = isset($attributes['textColor']) 
     ? esc_attr($attributes['textColor']) 
     : (isset($shortcodeAtributes['textcolor']) ? esc_attr($shortcodeAtributes['textcolor']) : '#000000');
@@ -197,9 +207,10 @@ function block_supply_render_callback($attributes, $shortcodeAtributes) {
     : (isset($shortcodeAtributes['borderradius']) ? esc_attr($shortcodeAtributes['borderradius']) : '0');
 
     $block_content = sprintf(
-        '<div class="block-one" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
+        '<div class="block-one" style="text-align: %s; color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
+        $alignment,
         $textColor,
         $backgroundColor,
         $fontSize,
@@ -214,6 +225,7 @@ function block_supply_render_callback($attributes, $shortcodeAtributes) {
 function supply_shortcode_handler($atts) {
     $atts = shortcode_atts(
         array(
+            'alignment' => 'left',
             'textcolor' => '', 
             'backgroundcolor' => '',
             'fontsize' => "16",
@@ -244,6 +256,10 @@ function block_market_cap_render_callback($attributes, $shortcodeAtributes) {
         $output .= '<p>No data available for market cap.</p>';
     }
     
+    $alignment = isset($attributes['alignment']) 
+    ? esc_attr($attributes['alignment']) 
+    : (isset($shortcodeAtributes['alignment']) ? esc_attr($shortcodeAtributes['alignment']) : 'left');
+
     $textColor = isset($attributes['textColor']) 
     ? esc_attr($attributes['textColor']) 
     : (isset($shortcodeAtributes['textcolor']) ? esc_attr($shortcodeAtributes['textcolor']) : '#000000');
@@ -269,9 +285,10 @@ function block_market_cap_render_callback($attributes, $shortcodeAtributes) {
     : (isset($shortcodeAtributes['borderradius']) ? esc_attr($shortcodeAtributes['borderradius']) : '0');
 
     $block_content = sprintf(
-        '<div class="block-one" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
+        '<div class="block-one" style="text-align: %s; color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
+        $alignment,
         $textColor,
         $backgroundColor,
         $fontSize,
@@ -286,6 +303,7 @@ function block_market_cap_render_callback($attributes, $shortcodeAtributes) {
 function market_cap_shortcode_handler($atts) {
     $atts = shortcode_atts(
         array(
+            'alignment' => 'left',
             'textcolor' => '', 
             'backgroundcolor' => '',
             'fontsize' => "16",
@@ -314,6 +332,10 @@ function block_total_txs_render_callback($attributes, $shortcodeAtributes){
         $output .= '<p>No data available for totalTxs.</p>';
     }
 
+    $alignment = isset($attributes['alignment']) 
+    ? esc_attr($attributes['alignment']) 
+    : (isset($shortcodeAtributes['alignment']) ? esc_attr($shortcodeAtributes['alignment']) : 'left');
+
     $textColor = isset($attributes['textColor']) 
     ? esc_attr($attributes['textColor']) 
     : (isset($shortcodeAtributes['textcolor']) ? esc_attr($shortcodeAtributes['textcolor']) : '#000000');
@@ -339,9 +361,10 @@ function block_total_txs_render_callback($attributes, $shortcodeAtributes){
     : (isset($shortcodeAtributes['borderradius']) ? esc_attr($shortcodeAtributes['borderradius']) : '0');
 
     $block_content = sprintf(
-        '<div class="block-total-txs" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
+        '<div class="block-total-txs" style="text-align: %s;color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
+        $alignment,
         $textColor,
         $backgroundColor,
         $fontSize,
@@ -358,6 +381,7 @@ function block_total_txs_render_callback($attributes, $shortcodeAtributes){
 function total_txs_shortcode_handler($atts) {
     $atts = shortcode_atts(
         array(
+            'alignment' => '',
             'textcolor' => '', 
             'backgroundcolor' => '',
             'fontsize' => "16",
