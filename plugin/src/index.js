@@ -1,6 +1,5 @@
 import './blocks/block-price';
 import './blocks/block-supply';
-import './blocks/block-marketCap';
-import './blocks/block-totalTxs'
-import './style.scss';
-import './editor.scss';
+import './blocks/block-market-cap';
+import './blocks/block-total-txs'
+
