@@ -52,7 +52,7 @@ add_shortcode('etoken_total_txs', 'total_txs_shortcode_handler');
     register_block_type(
         'agora-stats/block-market-cap',
         array(
-            'render_callback' => 'block_marketCap_render_callback',
+            'render_callback' => 'block_market_cap_render_callback',
         )
     );
 

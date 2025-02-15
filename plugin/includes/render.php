@@ -228,7 +228,7 @@ function supply_shortcode_handler($atts) {
     return block_supply_render_callback($atts, $atts);
 }
 
-function block_marketCap_render_callback($attributes, $shortcodeAtributes) {
+function block_market_cap_render_callback($attributes, $shortcodeAtributes) {
     $data = get_shared_data();
 
     if (!is_array($data) || empty($data['data']['tokenData'])) {
@@ -297,7 +297,7 @@ function market_cap_shortcode_handler($atts) {
     );
 
 
-    return block_marketCap_render_callback($atts, $atts);
+    return block_market_cap_render_callback($atts, $atts);
 }
 
 function block_total_txs_render_callback($attributes, $shortcodeAtributes){
@@ -339,7 +339,7 @@ function block_total_txs_render_callback($attributes, $shortcodeAtributes){
     : (isset($shortcodeAtributes['borderradius']) ? esc_attr($shortcodeAtributes['borderradius']) : '0');
 
     $block_content = sprintf(
-        '<div class="block-totalTxs" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
+        '<div class="block-total-txs" style="color: %s; background-color: %s; font-size: %dpx; border: %s; font-weight: %s; border-radius: %dpx;">
             %s
         </div>',
         $textColor,
