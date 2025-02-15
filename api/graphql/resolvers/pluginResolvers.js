@@ -37,7 +37,7 @@ const pluginResolvers = {
                 let supply
                 let currentPrice
                 let minTokenOrder
-                if(include.supply){
+                if(include.supply && Object.keys(include.supply).length > 0){
                     console.log("Here")
                     supply=result.supply
                 }else{

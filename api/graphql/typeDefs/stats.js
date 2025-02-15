@@ -17,13 +17,28 @@ const tokenTypeDefs = gql`
         minPriceInUsd: String
     }
 
+    type TotalTxs {
+        complete: Int
+        minimalist: String
+    }
+
+    type MarketCap {
+        complete: String
+        minimalist: String
+    }
+
+    type Supply {
+        complete: String
+        minimalist: String
+    }
+
     type TokenData {
         genesisInfo: GenesisInfo
         totalTrades: Float
         lastPrice: LastPrice
-        supply: String
-        marketCap: String
-        totalTxs: Int
+        supply: Supply
+        marketCap: MarketCap
+        totalTxs: TotalTxs
     }
 
     input TokenDataIncludeInput {
