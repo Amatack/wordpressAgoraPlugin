@@ -3,15 +3,13 @@ import edit from './edit';
 
 import AgoraIcon from '../../assets/agoraIcon';
 
-registerBlockType('agora-stats/block-price', {
-    title: 'Price',
-    category: 'widgets',
+registerBlockType('agora-stats/block-market-cap', {
+    title: 'Market Cap',
+    category: 'common',
     attributes: {
         textColor: { type: 'string', default: '#000000' },
         backgroundColor: { type: 'string', default: '#ffffff' },
         fontSize: { type: 'number', default: 16 },
-        propertyName: { type: 'string', default: '' },
-        number: { type: 'string', default: '[Select Option]' },
         hasBorder: { type: 'boolean', default: false },
         isBold: { type: 'boolean', default: false },
         borderRadius: { type: 'number', default: 0},
@@ -19,5 +17,5 @@ registerBlockType('agora-stats/block-price', {
     },
     edit,
     icon: AgoraIcon,
-    save: () => null, // Renderizado dinámico, no guardar salida en el cliente
+    save: () => null,
 });

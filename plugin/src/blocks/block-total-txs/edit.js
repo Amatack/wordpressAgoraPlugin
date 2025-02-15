@@ -1,14 +1,14 @@
 import { useState, useEffect } from '@wordpress/element';
 import { ToggleControl, PanelBody, FontSizePicker, RangeControl, ToolbarGroup } from '@wordpress/components';
-import { useBlockProps, BlockControls, AlignmentToolbar, InspectorControls, PanelColorSettings} from '@wordpress/block-editor';
+import { useBlockProps, BlockControls, AlignmentToolbar, InspectorControls, PanelColorSettings, RichText } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 const Edit = ({attributes, setAttributes}) => {
     const {alignment, borderRadius, textColor, backgroundColor, fontSize, hasBorder, isBold } = attributes;
 
     const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [tokenId, setTokenId] = useState(null);
+    const [loading, setLoading] = useState(true);
     
     useEffect(() => {
         const possibleURLs = [
@@ -52,18 +52,19 @@ const Edit = ({attributes, setAttributes}) => {
 
     useEffect(() => {
         if (!tokenId) return;
+
         const query = `
             query TokenData($tokenId: String!, $include: TokenDataIncludeInput!) {
                 tokenData(tokenId: $tokenId, include: $include) {
-                    supply
+                    totalTxs
                 }
             }
         `;
 
         const variables = {
-            tokenId: tokenId,
+            tokenId:  tokenId,
             include: {
-                supply: true,
+                totalTxs: true,
             },
         };
 
@@ -96,8 +97,7 @@ const Edit = ({attributes, setAttributes}) => {
     if (!data || !data.tokenData) {
         return <p>{__('No data available.', 'agora-stats')}</p>;
     }
-
-    const { supply } = data.tokenData;
+    const { totalTxs } = data.tokenData;
 
     return (
         <>
@@ -129,7 +129,7 @@ const Edit = ({attributes, setAttributes}) => {
                     </PanelBody>
             </InspectorControls>
             <div {...blockProps}>
-                <p style={{ textAlign: alignment }}>{supply}</p>
+                <p style={{ textAlign: alignment }}>{totalTxs}</p>
             </div>
         </>
     );

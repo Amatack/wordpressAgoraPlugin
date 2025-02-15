@@ -1,23 +1,14 @@
-import { useEffect, useState } from '@wordpress/element';
-import { ToggleControl, PanelBody, FontSizePicker,RadioControl, RangeControl , ToolbarGroup} from '@wordpress/components';
-import { useBlockProps, BlockControls, AlignmentToolbar, InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
+import { useState, useEffect } from '@wordpress/element';
+import { ToggleControl, PanelBody, FontSizePicker, RangeControl, ToolbarGroup} from '@wordpress/components';
+import { useBlockProps,  BlockControls, AlignmentToolbar, InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
-const Edit = ({ attributes, setAttributes }) => {
+const Edit = ({attributes, setAttributes}) => {
     const {alignment, borderRadius, textColor, backgroundColor, fontSize, hasBorder, isBold } = attributes;
-    const [data, setData] = useState(null);
+
     const [tokenId, setTokenId] = useState(null);
-    
-    const handleChange = (value) => {
-        let propertyName = "";
-    
-        if (value === minXecOrder) propertyName = "minXecOrder";
-        if (value === minTokenOrder) propertyName = "minTokenOrder";
-        if (value === minPriceInXec) propertyName = "minPriceInXec";
-        if (value === minPriceInUsd) propertyName = "minPriceInUsd";
-    
-        setAttributes({ number: value , propertyName: propertyName});
-    };
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const possibleURLs = [
@@ -60,18 +51,12 @@ const Edit = ({ attributes, setAttributes }) => {
       }, []);
 
     useEffect(() => {
-
         if (!tokenId) return;
 
         const query = `
             query TokenData($tokenId: String!, $include: TokenDataIncludeInput!) {
                 tokenData(tokenId: $tokenId, include: $include) {
-                    lastPrice {
-                        minPriceInXec
-                        minPriceInUsd
-                        minTokenOrder
-                        minXecOrder
-                    }
+                    marketCap
                 }
             }
         `;
@@ -79,7 +64,7 @@ const Edit = ({ attributes, setAttributes }) => {
         const variables = {
             tokenId:  tokenId,
             include: {
-                lastPrice: true,
+                marketCap: true,
             },
         };
 
@@ -92,25 +77,31 @@ const Edit = ({ attributes, setAttributes }) => {
         })
             .then((response) => response.json())
             .then((result) => {
-                if (result.data && result.data.tokenData && result.data.tokenData.lastPrice) {
-                    setData(result.data.tokenData.lastPrice);
-                } else {
-                    console.error("Invalid response structure:", result);
-                }
+                setData(result.data);
+                setLoading(false);
             })
             .catch((error) => {
                 console.error('Error fetching GraphQL data:', error);
+                setLoading(false);
             });
     }, [tokenId]);
 
     const blockProps = useBlockProps({ 
-        style: { color: textColor, backgroundColor, fontSize: `${fontSize}px`, border: hasBorder ? '2px solid black' : 'none', fontWeight: isBold ? 'bold' : 'normal', borderRadius: borderRadius + 'px', }
+        style: { color: textColor, backgroundColor, fontSize: `${fontSize}px`, border: hasBorder ? '2px solid black' : 'none', fontWeight: isBold ? 'bold' : 'normal',borderRadius: borderRadius + 'px', }
     });
 
-    const { minXecOrder, minTokenOrder, minPriceInXec, minPriceInUsd } = data || {};
+    if (loading) {
+        return <p>{__('Loading data...', 'agora-stats')}</p>;
+    }
+
+    if (!data || !data.tokenData) {
+        return <p>{__('No data available.', 'agora-stats')}</p>;
+    }
+
+    const { marketCap } = data.tokenData;
 
     return (
-        <div>
+        <>
             <BlockControls>
                 <ToolbarGroup>
                     <AlignmentToolbar
@@ -119,26 +110,15 @@ const Edit = ({ attributes, setAttributes }) => {
                     />
                 </ToolbarGroup>
             </BlockControls>
-
+    
             <InspectorControls>
-                <PanelBody title="Data from Agora">
-                    <RadioControl
-                        label="Select price property"
-                        selected={attributes.number}
-                        options={[
-                            { label: 'Min. Xec Order', value: minXecOrder || "N/A" },
-                            { label: 'Min. Token Order', value: minTokenOrder || "N/A" },
-                            { label: 'Min. Price In XEC', value: minPriceInXec || "N/A" },
-                            { label: 'Min. Price In USD', value: minPriceInUsd || "N/A" },
-                        ]}
-                        onChange={handleChange}
-                    />
-                    <FontSizePicker value={fontSize} onChange={(newSize) => setAttributes({ fontSize: newSize })} min={10} max={50} />
+                <PanelBody title={__('Ajustes de Estilo', 'text-domain')}>
                     <PanelColorSettings colorSettings={[
                         { value: textColor, onChange: (newColor) => setAttributes({ textColor: newColor }), label: __('Text color', 'text-domain') },
                         { value: backgroundColor, onChange: (newColor) => setAttributes({ backgroundColor: newColor }), label: __('Background color', 'text-domain') }
                     ]}/>
-                    
+                    <FontSizePicker value={fontSize} onChange={(newSize) => setAttributes({ fontSize: newSize })} min={10} max={50} />
+                    <br />
                     <ToggleControl label={__('Border', 'text-domain')} checked={hasBorder} onChange={() => setAttributes({ hasBorder: !hasBorder })} />
                     <RangeControl
                         label="Border radius"
@@ -150,10 +130,11 @@ const Edit = ({ attributes, setAttributes }) => {
                     <ToggleControl label={__('Bold', 'text-domain')} checked={isBold} onChange={() => setAttributes({ isBold: !isBold })} />
                 </PanelBody>
             </InspectorControls>
+    
             <div {...blockProps}>
-                <p  style={{ textAlign: alignment }}>{attributes.number || "[Select Option]"}</p>
+                <p style={{ textAlign: alignment }}>{marketCap}</p>
             </div>
-        </div>
+        </>
     );
 };
 

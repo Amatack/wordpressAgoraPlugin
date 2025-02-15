@@ -12,7 +12,8 @@ registerBlockType('agora-stats/block-supply', {
         fontSize: { type: 'number', default: 16 },
         hasBorder: { type: 'boolean', default: false },
         isBold: { type: 'boolean', default: false },
-        borderRadius: { type: 'number', default: 0}
+        borderRadius: { type: 'number', default: 0},
+        alignment: { type: 'string', default: 'left'}
     },
     edit,
     icon: AgoraIcon,
