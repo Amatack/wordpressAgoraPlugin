@@ -27,13 +27,13 @@ export async function getSupply(chronik, tokenId, decimals) {
             if (humanizeCirculatingSupply.includes('.00')) {
                 // If finish in ".00", we delete  the decimals
                 return {
-                    complete: circulatingSupplyWithDecimals,
+                    complete: String(circulatingSupplyWithDecimals),
                     minimalist: humanizeCirculatingSupply.replace('.00', ''),
                 }
                 
             }
             return {
-                complete: circulatingSupplyWithDecimals,
+                complete: String(circulatingSupplyWithDecimals),
                 minimalist: humanizeCirculatingSupply
             }
         }else{
@@ -46,13 +46,13 @@ export async function getSupply(chronik, tokenId, decimals) {
             if (humanizeCirculatingSupply.includes('.00')) {
                 // If finish in ".00", we delete  the decimals
                 return {
-                    complete: circulatingSupplyWithDecimals,
+                    complete: String(circulatingSupplyWithDecimals),
                     minimalist: humanizeCirculatingSupply.replace('.00', ''),
                 }
                 
             }
             return {
-                complete: circulatingSupplyWithDecimals,
+                complete: String(circulatingSupplyWithDecimals),
                 minimalist: humanizeCirculatingSupply
             }
         }
