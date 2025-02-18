@@ -13,7 +13,8 @@ registerBlockType('agora-stats/block-total-txs', {
         hasBorder: { type: 'boolean', default: false },
         isBold: { type: 'boolean', default: false },
         borderRadius: { type: 'number', default: 0},
-        alignment: { type: 'string', default: 'left'}
+        alignment: { type: 'string', default: 'left'},
+        propertyName: { type: 'string', default: '' },
     },
     edit,
     icon: AgoraIcon,

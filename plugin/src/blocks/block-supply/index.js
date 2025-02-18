@@ -10,6 +10,7 @@ registerBlockType('agora-stats/block-supply', {
         textColor: { type: 'string', default: '#000000' },
         backgroundColor: { type: 'string', default: '#ffffff' },
         fontSize: { type: 'number', default: 16 },
+        propertyName: { type: 'string', default: '' },
         hasBorder: { type: 'boolean', default: false },
         isBold: { type: 'boolean', default: false },
         borderRadius: { type: 'number', default: 0},

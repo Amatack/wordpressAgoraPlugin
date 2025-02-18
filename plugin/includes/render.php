@@ -21,9 +21,18 @@ function fetch_data_from_graphql() {
                 minPriceInXec
                 minPriceInUsd
             }
-            supply
-            marketCap
-            totalTxs
+            supply {
+                minimalist
+                complete
+            }
+            marketCap {
+                minimalist
+                complete
+            }
+            totalTxs {
+                minimalist
+                complete
+            }
         }
     }
     GRAPHQL, $token_id);
@@ -85,6 +94,7 @@ function block_price_render_callback($attributes, $shortcodeAtributes, $property
     $lastPrice = $data['data']['tokenData']['lastPrice'];
 
     $output = '';
+    $priceValue = '';
     $priceKey = isset($attributes['propertyName']) 
     ? $attributes['propertyName'] 
     : $propertyName; // Valor por defecto
@@ -160,24 +170,38 @@ function price_data_shortcode_handler($atts) {
     return block_price_render_callback($atts, $atts, $propertyName);
 }
 
-function block_supply_render_callback($attributes, $shortcodeAtributes) {
+function block_supply_render_callback($attributes, $shortcodeAtributes, $propertyName) {
     $data = get_shared_data();
-    error_log("shortcodeAtributes: ");
-    error_log(print_r($shortcodeAtributes, true));
-    
+    error_log('propertyName: ');
+    if (isset($attributes['propertyName'])) {
+        if (is_array($attributes['propertyName'])) {
+            error_log("propertyName es un array: " . print_r($attributes['propertyName'], true));
+        } else {
+            error_log("propertyName NO es un array: " . var_export($attributes['propertyName'], true));
+        }
+    } else {
+        error_log("La clave 'propertyName' no está definida en \$attributes.");
+    }
     if (!is_array($data) || empty($data['data']['tokenData'])) {
         return '<p>No data found for the specified token.</p>';
     }
     
     $supply = $data['data']['tokenData']['supply'];
     $output = '';
+    $supplyValue = '';
+    
+    $supplyKey = isset($attributes['propertyName'])
+    ? $attributes['propertyName'] 
+    : $propertyName; // Valor por defecto
 
-    if (!empty($supply)) {
-        $output .= '<p>' . esc_html($supply) . '</p>';
+    if ( is_scalar($supplyKey) && isset($supply[(string) $supplyKey])) {
+        $supplyValue = $supply[(string) $supplyKey]; // Convertir a string por seguridad
     } else {
-        $output .= '<p>No data available for supply.</p>';
+        error_log('Executed here');
+        $supplyValue = 'N/A';
     }
 
+    $output = '<p>' . esc_html($supplyValue) . '</p>';
     $alignment = isset($attributes['alignment']) 
     ? esc_attr($attributes['alignment']) 
     : (isset($shortcodeAtributes['alignment']) ? esc_attr($shortcodeAtributes['alignment']) : 'left');
@@ -231,16 +255,17 @@ function supply_shortcode_handler($atts) {
             'fontsize' => "16",
             'hasborder' => false,
             'isbold' => false,
-            'borderradius' => "0"
+            'borderradius' => "0",
+            'propertyname' => "complete"
         ),
         array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
     );
 
-
-    return block_supply_render_callback($atts, $atts);
+    $propertyName = $atts['propertyname'];
+    return block_supply_render_callback($atts, $atts, $propertyName);
 }
 
-function block_market_cap_render_callback($attributes, $shortcodeAtributes) {
+function block_market_cap_render_callback($attributes, $shortcodeAtributes, $propertyName) {
     $data = get_shared_data();
 
     if (!is_array($data) || empty($data['data']['tokenData'])) {
@@ -248,14 +273,20 @@ function block_market_cap_render_callback($attributes, $shortcodeAtributes) {
     }
 
     $marketCap = $data['data']['tokenData']['marketCap'];
-    
     $output = '';
-    if (!empty($marketCap)) {
-        $output .= '<p>' . esc_html($marketCap) . '</p>';
+    $marketCapValue = '';
+
+    $marketCapKey = isset($attributes['propertyName'])
+    ? $attributes['propertyName'] 
+    : $propertyName; // Valor por defecto
+
+    if ( is_scalar($marketCapKey) && isset($marketCap[(string) $marketCapKey])) {
+        $marketCapValue = $marketCap[(string) $marketCapKey]; // Convertir a string por seguridad
     } else {
-        $output .= '<p>No data available for market cap.</p>';
+        error_log('Executed here');
+        $marketCapValue = 'N/A';
     }
-    
+    $output = '<p>' . esc_html($marketCapValue) . '</p>';
     $alignment = isset($attributes['alignment']) 
     ? esc_attr($attributes['alignment']) 
     : (isset($shortcodeAtributes['alignment']) ? esc_attr($shortcodeAtributes['alignment']) : 'left');
@@ -309,16 +340,17 @@ function market_cap_shortcode_handler($atts) {
             'fontsize' => "16",
             'hasborder' => false,
             'isbold' => false,
-            'borderradius' => "0"
+            'borderradius' => "0",
+            'propertyname' => "complete"
         ),
         array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
     );
 
-
-    return block_market_cap_render_callback($atts, $atts);
+    $propertyName = $atts['propertyname'];
+    return block_market_cap_render_callback($atts, $atts, $propertyName);
 }
 
-function block_total_txs_render_callback($attributes, $shortcodeAtributes){
+function block_total_txs_render_callback($attributes, $shortcodeAtributes, $propertyName){
     $data = get_shared_data();
     error_log(print_r($data, true));
     if (!is_array($data) || empty($data['data']['tokenData'])) {
@@ -326,12 +358,19 @@ function block_total_txs_render_callback($attributes, $shortcodeAtributes){
     }
     $totalTxs = $data['data']['tokenData']['totalTxs'];
     $output = '';
-    if (!empty($totalTxs)) {
-        $output .= '<p>' . esc_html($totalTxs) . '</p>';
-    } else {
-        $output .= '<p>No data available for totalTxs.</p>';
-    }
+    $totalTxsValue = '';
 
+    $totalTxsKey = isset($attributes['propertyName'])
+    ? $attributes['propertyName'] 
+    : $propertyName; // Valor por defecto
+    
+    if ( is_scalar($totalTxsKey) && isset($totalTxs[(string) $totalTxsKey])) {
+        $totalTxsValue = $totalTxs[(string) $totalTxsKey]; // Convertir a string por seguridad
+    } else {
+        error_log('Executed here');
+        $totalTxsValue = 'N/A';
+    }
+    $output = '<p>' . esc_html($totalTxsValue) . '</p>';
     $alignment = isset($attributes['alignment']) 
     ? esc_attr($attributes['alignment']) 
     : (isset($shortcodeAtributes['alignment']) ? esc_attr($shortcodeAtributes['alignment']) : 'left');
@@ -387,13 +426,15 @@ function total_txs_shortcode_handler($atts) {
             'fontsize' => "16",
             'hasborder' => false,
             'isbold' => false,
-            'borderradius' => "0"
+            'borderradius' => "0",
+            'propertyname' => "complete"
         ),
         array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
     );
 
 
-    return block_total_txs_render_callback($atts, $atts);
+    $propertyName = $atts['propertyname'];
+    return block_total_txs_render_callback($atts, $atts, $propertyName);
 }
 
 //On Editor

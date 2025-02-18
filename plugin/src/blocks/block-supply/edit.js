@@ -1,15 +1,24 @@
 import { useState, useEffect } from '@wordpress/element';
-import { ToggleControl, PanelBody, FontSizePicker, RangeControl, ToolbarGroup } from '@wordpress/components';
+import { ToggleControl, PanelBody, FontSizePicker, RangeControl, ToolbarGroup, RadioControl } from '@wordpress/components';
 import { useBlockProps, BlockControls, AlignmentToolbar, InspectorControls, PanelColorSettings} from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 const Edit = ({attributes, setAttributes}) => {
-    const {alignment, borderRadius, textColor, backgroundColor, fontSize, hasBorder, isBold } = attributes;
+    const {alignment, content, borderRadius, textColor, backgroundColor, fontSize, hasBorder, isBold } = attributes;
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [tokenId, setTokenId] = useState(null);
     
+    const handleChange = (value) => {
+        let propertyName = "";
+    
+        if (value === complete) propertyName = "complete";
+        if (value === minimalist) propertyName = "minimalist";
+    
+        setAttributes({ content: value , propertyName: propertyName});
+    };
+
     useEffect(() => {
         const possibleURLs = [
           window.location.origin + '/wordpress/wp-admin/admin-ajax.php?action=get_token_id_on_editor',
@@ -19,7 +28,6 @@ const Edit = ({attributes, setAttributes}) => {
         const testUrl = (index = 0) => {
           if (index >= possibleURLs.length) {
             console.error("Failed to get token_id after trying several URLs.");
-            setLoading(false);
             return;
           }
     
@@ -35,7 +43,6 @@ const Edit = ({attributes, setAttributes}) => {
             .then(result => {
               if (result.success && result.data.token_id) {
                 setTokenId(result.data.token_id);
-                setLoading(false);
               } else {
                 console.error(`Error getting token_id from ${urlActual}:`, result);
                 testUrl(index + 1); // Test next URL
@@ -55,7 +62,10 @@ const Edit = ({attributes, setAttributes}) => {
         const query = `
             query TokenData($tokenId: String!, $include: TokenDataIncludeInput!) {
                 tokenData(tokenId: $tokenId, include: $include) {
-                    supply
+                    supply{
+                        minimalist
+                        complete
+                    }
                 }
             }
         `;
@@ -76,7 +86,13 @@ const Edit = ({attributes, setAttributes}) => {
         })
             .then((response) => response.json())
             .then((result) => {
-                setData(result.data);
+
+                if (result.data && result.data.tokenData && result.data.tokenData.supply) {
+                    setData(result.data.tokenData.supply);
+                } else {
+                    console.error("Invalid response structure:", result);
+                }
+
                 setLoading(false);
             })
             .catch((error) => {
@@ -93,11 +109,7 @@ const Edit = ({attributes, setAttributes}) => {
         return <p>{__('Loading data...', 'agora-stats')}</p>;
     }
 
-    if (!data || !data.tokenData) {
-        return <p>{__('No data available.', 'agora-stats')}</p>;
-    }
-
-    const { supply } = data.tokenData;
+    const { complete, minimalist } = data || {};
 
     return (
         <>
@@ -110,7 +122,18 @@ const Edit = ({attributes, setAttributes}) => {
                 </ToolbarGroup>
             </BlockControls>
             <InspectorControls>
-                    <PanelBody title={__('Ajustes de Estilo', 'text-domain')}>
+                    <PanelBody title={__('Style Settings', 'text-domain')}>
+                        <RadioControl
+                            label="Select display mode"
+                            
+                            selected={attributes.content}
+                            options={[
+                                { label: 'complete', value: complete || "N/A" },
+                                { label: 'minimalist', value: minimalist || "N/A"},
+                            ]}
+                            onChange={handleChange}
+                        />
+                        
                         <PanelColorSettings colorSettings={[
                             { value: textColor, onChange: (newColor) => setAttributes({ textColor: newColor }), label: __('Text color', 'text-domain') },
                             { value: backgroundColor, onChange: (newColor) => setAttributes({ backgroundColor: newColor }), label: __('Background color', 'text-domain') }
@@ -129,7 +152,7 @@ const Edit = ({attributes, setAttributes}) => {
                     </PanelBody>
             </InspectorControls>
             <div {...blockProps}>
-                <p style={{ textAlign: alignment }}>{supply}</p>
+                <p style={{ textAlign: alignment }}>{attributes.content || "[Select Option]"}</p>
             </div>
         </>
     );
