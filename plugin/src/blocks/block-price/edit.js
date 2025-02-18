@@ -37,7 +37,7 @@ const Edit = ({ attributes, setAttributes }) => {
           fetch(urlActual)
             .then(response => {
               if (!response.ok) {
-                throw new Error(`Error ${response.status} al intentar ${urlActual}`); // Mejora el manejo de errores
+                throw new Error(`Error ${response.status} al intentar ${urlActual}`); // Improve error handling
               }
               return response.json();
             })

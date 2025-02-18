@@ -42,7 +42,7 @@ function fetch_data_from_graphql() {
             'Content-Type' => 'application/json',
         ),
         'body' => json_encode(array('query' => $query)),
-        'timeout' => 10, // Agregamos un tiempo de espera para evitar bloqueos
+        'timeout' => 10, // we add a waiting time to avoid blockages
     ));
 
     if (is_wp_error($response)) {
@@ -97,12 +97,12 @@ function block_price_render_callback($attributes, $shortcodeAtributes, $property
     $priceValue = '';
     $priceKey = isset($attributes['propertyName']) 
     ? $attributes['propertyName'] 
-    : $propertyName; // Valor por defecto
+    : $propertyName; // default value
 
     if (is_array($lastPrice) && isset($lastPrice[$priceKey])) {
-        $priceValue = $lastPrice[$priceKey]; // Acceso dinámico en array
+        $priceValue = $lastPrice[$priceKey]; // Dynamic array access
     } else {
-        $priceValue = 'N/A'; // Valor por defecto si no existe
+        $priceValue = 'N/A'; // Default value if not exists
     }
 
     $output = '<p>' . esc_html($priceValue) . '</p>';
@@ -192,10 +192,10 @@ function block_supply_render_callback($attributes, $shortcodeAtributes, $propert
     
     $supplyKey = isset($attributes['propertyName'])
     ? $attributes['propertyName'] 
-    : $propertyName; // Valor por defecto
+    : $propertyName; // default value
 
     if ( is_scalar($supplyKey) && isset($supply[(string) $supplyKey])) {
-        $supplyValue = $supply[(string) $supplyKey]; // Convertir a string por seguridad
+        $supplyValue = $supply[(string) $supplyKey]; // Convert to string for security
     } else {
         error_log('Executed here');
         $supplyValue = 'N/A';
@@ -278,10 +278,10 @@ function block_market_cap_render_callback($attributes, $shortcodeAtributes, $pro
 
     $marketCapKey = isset($attributes['propertyName'])
     ? $attributes['propertyName'] 
-    : $propertyName; // Valor por defecto
+    : $propertyName; 
 
     if ( is_scalar($marketCapKey) && isset($marketCap[(string) $marketCapKey])) {
-        $marketCapValue = $marketCap[(string) $marketCapKey]; // Convertir a string por seguridad
+        $marketCapValue = $marketCap[(string) $marketCapKey]; 
     } else {
         error_log('Executed here');
         $marketCapValue = 'N/A';
@@ -362,10 +362,10 @@ function block_total_txs_render_callback($attributes, $shortcodeAtributes, $prop
 
     $totalTxsKey = isset($attributes['propertyName'])
     ? $attributes['propertyName'] 
-    : $propertyName; // Valor por defecto
+    : $propertyName; 
     
     if ( is_scalar($totalTxsKey) && isset($totalTxs[(string) $totalTxsKey])) {
-        $totalTxsValue = $totalTxs[(string) $totalTxsKey]; // Convertir a string por seguridad
+        $totalTxsValue = $totalTxs[(string) $totalTxsKey]; 
     } else {
         error_log('Executed here');
         $totalTxsValue = 'N/A';
