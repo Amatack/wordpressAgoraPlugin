@@ -12,12 +12,12 @@ export async function getTotalTxs(chronik, tokenId) {
         if (humanizeTotalTxs.includes('.00')) {
             // If finish in ".00", we delete  the decimals
             return {
-                complete: totalTxs,
+                complete: String(totalTxs),
                 minimalist: humanizeTotalTxs.replace('.00', ''),
             }
         }
         return {
-            complete: totalTxs,
+            complete: String(totalTxs),
             minimalist: humanizeTotalTxs
         }
     } catch (error) {

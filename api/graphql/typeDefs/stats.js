@@ -18,7 +18,7 @@ const tokenTypeDefs = gql`
     }
 
     type TotalTxs {
-        complete: Int
+        complete: String
         minimalist: String
     }
 
