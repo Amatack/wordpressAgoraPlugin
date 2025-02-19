@@ -161,12 +161,12 @@ function price_data_shortcode_handler($atts) {
             'hasborder' => false,
             'isbold' => false,
             'borderradius' => "0",
-            'propertyname' => "minXecOrder",
+            'priceproperty' => "minXecOrder",
         ),
         array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
     );
 
-    $propertyName = $atts['propertyname'];
+    $propertyName = $atts['priceproperty'];
     return block_price_render_callback($atts, $atts, $propertyName);
 }
 
@@ -256,12 +256,12 @@ function supply_shortcode_handler($atts) {
             'hasborder' => false,
             'isbold' => false,
             'borderradius' => "0",
-            'propertyname' => "complete"
+            'displaymode' => "complete"
         ),
         array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
     );
 
-    $propertyName = $atts['propertyname'];
+    $propertyName = $atts['displaymode'];
     return block_supply_render_callback($atts, $atts, $propertyName);
 }
 
@@ -341,12 +341,12 @@ function market_cap_shortcode_handler($atts) {
             'hasborder' => false,
             'isbold' => false,
             'borderradius' => "0",
-            'propertyname' => "complete"
+            'displaymode' => "complete"
         ),
         array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
     );
 
-    $propertyName = $atts['propertyname'];
+    $propertyName = $atts['displaymode'];
     return block_market_cap_render_callback($atts, $atts, $propertyName);
 }
 
@@ -427,13 +427,13 @@ function total_txs_shortcode_handler($atts) {
             'hasborder' => false,
             'isbold' => false,
             'borderradius' => "0",
-            'propertyname' => "complete"
+            'displaymode' => "complete"
         ),
         array_change_key_case($atts, CASE_LOWER) // Convert atributtes to lower case
     );
 
 
-    $propertyName = $atts['propertyname'];
+    $propertyName = $atts['displaymode'];
     return block_total_txs_render_callback($atts, $atts, $propertyName);
 }
 

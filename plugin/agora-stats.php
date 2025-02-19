@@ -3,7 +3,7 @@
  * Plugin Name: Agora Stats
  * Plugin URI: https://github.com/Amatack/wordpressAgoraPlugin
  * Description: Shows agora statistics about your token.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: Amatack
  * Author URI: https://github.com/Amatack/
  * License: GPL2
