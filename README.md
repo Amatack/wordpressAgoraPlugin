@@ -14,15 +14,19 @@ This is a plugin that allows you to view and customize the statistics of the tok
 3. Download the latest version: Find the most recent release and click on the .zip file to download it.
 ### Upload plugin
 1. Log in to your WordPress admin panel.
+
 2. Go to Plugins > Add New.
+
 3. Click the Upload Plugin button at the top.
+
 4. Select the .zip file of the plugin you downloaded from GitHub.
+
 5. Click Install Now, and once the installation is complete, click Activate Plugin.
 ### Setting up etoken
 ![set up token id](assets/set_up_token_id.gif)
 ### Use of Blocks
 ![Use of blocks](assets/use_of_blocks.gif)
-View available blocks with key word "agora"
+View available blocks with keyword "agora"
 ## Shortcodes
 ### Opening tags
 #### [etoken_price_data]
